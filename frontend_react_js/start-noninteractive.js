@@ -8,54 +8,82 @@
  * - Disables heavy file watcher polling (CHOKIDAR_USEPOLLING/WATCHPACK_POLLING)
  * - Caps Node memory via NODE_OPTIONS, unless already set.
  * - Forces HOST=0.0.0.0 for containerized environments.
+ * - Auto-selects a free port to avoid CRA interactive prompt.
  *
  * This prevents the "Something is already running on port 3000. Would you like to run the app on another port?"
- * interactive prompt by ensuring a specific PORT is set up-front in CI.
+ * interactive prompt by ensuring a specific free PORT is set up-front in CI.
  */
 
+const net = require('net');
 const { spawn } = require('child_process');
 
 function envOrDefault(name, def) {
   return process.env[name] && process.env[name].length ? process.env[name] : def;
 }
 
-// Respect REACT_APP_PORT, then PORT, fallback 3000
-const resolvedPort = process.env.REACT_APP_PORT || process.env.PORT || '3000';
+function checkPort(port, host = '0.0.0.0') {
+  // Returns a promise that resolves to true if port is free, false if in use
+  return new Promise((resolve) => {
+    const server = net.createServer()
+      .once('error', () => resolve(false))
+      .once('listening', () => server.close(() => resolve(true)))
+      .listen(port, host);
+  });
+}
 
-// Compose environment overrides
-const env = {
-  ...process.env,
-  // Ensure CI-like behavior
-  CI: envOrDefault('CI', 'true'),
-  BROWSER: envOrDefault('BROWSER', 'none'),
-  HOST: envOrDefault('HOST', '0.0.0.0'),
-  PORT: resolvedPort,
-  // Reduce resource usage
-  CHOKIDAR_USEPOLLING: envOrDefault('CHOKIDAR_USEPOLLING', 'false'),
-  WATCHPACK_POLLING: envOrDefault('WATCHPACK_POLLING', 'false'),
-  GENERATE_SOURCEMAP: envOrDefault('GENERATE_SOURCEMAP', 'false'),
-  // Cap Node memory unless already specified
-  NODE_OPTIONS: process.env.NODE_OPTIONS && process.env.NODE_OPTIONS.trim().length
-    ? process.env.NODE_OPTIONS
-    : '--max-old-space-size=1024',
-  // Avoid CRA fast refresh overhead in CI-like environments
-  FAST_REFRESH: envOrDefault('FAST_REFRESH', 'false'),
-};
-
-// Start CRA
-const child = spawn(
-  process.platform === 'win32' ? 'npx.cmd' : 'npx',
-  ['react-scripts', 'start'],
-  {
-    stdio: 'inherit',
-    env,
+async function findFreePort(preferredPort) {
+  const startPort = Number(preferredPort || 3000);
+  for (let p = startPort; p < startPort + 20; p++) {
+    /* eslint-disable no-await-in-loop */
+    const free = await checkPort(p);
+    if (free) return String(p);
   }
-);
+  // fallback to preferred if none found (CRA will then handle)
+  return String(startPort);
+}
 
-child.on('close', (code, signal) => {
-  if (signal) {
-    console.error(`[start-noninteractive] Dev server terminated by signal: ${signal}`);
-    process.exit(137); // map to 137 typical OOM/kill for consistency
-  }
-  process.exit(code);
-});
+(async () => {
+  // Respect REACT_APP_PORT, then PORT, fallback 3000
+  const preferredPort = process.env.REACT_APP_PORT || process.env.PORT || '3000';
+  const resolvedPort = await findFreePort(preferredPort);
+
+  // Compose environment overrides
+  const env = {
+    ...process.env,
+    // Ensure CI-like behavior
+    CI: envOrDefault('CI', 'true'),
+    BROWSER: envOrDefault('BROWSER', 'none'),
+    HOST: envOrDefault('HOST', '0.0.0.0'),
+    PORT: resolvedPort,
+    // Reduce resource usage
+    CHOKIDAR_USEPOLLING: envOrDefault('CHOKIDAR_USEPOLLING', 'false'),
+    WATCHPACK_POLLING: envOrDefault('WATCHPACK_POLLING', 'false'),
+    GENERATE_SOURCEMAP: envOrDefault('GENERATE_SOURCEMAP', 'false'),
+    // Cap Node memory unless already specified
+    NODE_OPTIONS: process.env.NODE_OPTIONS && process.env.NODE_OPTIONS.trim().length
+      ? process.env.NODE_OPTIONS
+      : '--max-old-space-size=1024',
+    // Avoid CRA fast refresh overhead in CI-like environments
+    FAST_REFRESH: envOrDefault('FAST_REFRESH', 'false'),
+  };
+
+  console.log(`[start-noninteractive] Using PORT=${env.PORT} HOST=${env.HOST}`);
+
+  // Start CRA
+  const child = spawn(
+    process.platform === 'win32' ? 'npx.cmd' : 'npx',
+    ['react-scripts', 'start'],
+    {
+      stdio: 'inherit',
+      env,
+    }
+  );
+
+  child.on('close', (code, signal) => {
+    if (signal) {
+      console.error(`[start-noninteractive] Dev server terminated by signal: ${signal}`);
+      process.exit(137); // map to 137 typical OOM/kill for consistency
+    }
+    process.exit(code);
+  });
+})();
