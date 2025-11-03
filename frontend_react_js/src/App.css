@@ -8,6 +8,24 @@
   --border-color: #e9ecef;
   --button-bg: #007bff;
   --button-text: #ffffff;
+
+  /* Figma-derived style tokens used by SignIn */
+  --style-10-background-color: #ffffff;
+  --style-3-background-color: #000000;
+  --style-18-background-color: #121212;
+  --style-11-background-color: #129575;
+  --style-28-border-color: #d9d9d9;
+  --style-30-border-color: #d9d9d9;
+  --style-32-background-color: #121212;
+  --style-126-background-color: #ffffff;
+
+  /* Typography color tokens */
+  --typo-66-color: #121212;
+  --typo-65-color: #d9d9d9;
+  --typo-64-color: #d9d9d9;
+  --typo-63-color: #000000;
+  --typo-58-color: #ffffff;
+  --typo-67-color: #303030;
 }
 
 [data-theme="dark"] {
@@ -19,6 +37,23 @@
   --border-color: #404040;
   --button-bg: #0056b3;
   --button-text: #ffffff;
+
+  /* Dark adjustments for SignIn */
+  --style-10-background-color: #1a1a1a;
+  --style-3-background-color: #ffffff;
+  --style-18-background-color: #ffffff;
+  --style-11-background-color: #0f7a60;
+  --style-28-border-color: #404040;
+  --style-30-border-color: #404040;
+  --style-32-background-color: #ffffff;
+  --style-126-background-color: #1a1a1a;
+
+  --typo-66-color: #f0f0f0;
+  --typo-65-color: #a1a1a1;
+  --typo-64-color: #a1a1a1;
+  --typo-63-color: #ffffff;
+  --typo-58-color: #ffffff;
+  --typo-67-color: #e0e0e0;
 }
 
 .App {
