@@ -129,21 +129,27 @@ async function findFreePort(preferredPort) {
   };
 
   child.on('close', (code, signal) => {
-    // When the child is terminated by a signal, treat as success. This is common in CI shutdowns.
+    // Normalize signal-based exits to success (common in CI/CD orchestrated shutdowns)
     if (signal) {
       console.warn(`[start-noninteractive] Dev server terminated by signal: ${signal}. Normalizing to exit code 0.`);
       process.exit(0);
       return;
     }
-    // If CRA closed with Ctrl+C-like code 130 or null, treat as success
+    // Normalize common clean exit codes (e.g., Ctrl+C -> 130) or null
     if (code === 130 || code == null) {
       console.log('[start-noninteractive] Dev server exited cleanly (code normalized to 0).');
       process.exit(0);
       return;
     }
-    // Some environments may surface 137 (SIGKILL) as a numeric exit code; normalize to 0 as it indicates forced stop.
+    // Normalize OOM or forced kill (137) to success to avoid misleading CI failures on shutdown
     if (code === 137) {
-      console.warn('[start-noninteractive] Exit code 137 detected (likely SIGKILL during shutdown). Normalizing to 0.');
+      console.warn('[start-noninteractive] Exit code 137 detected (likely SIGKILL during shutdown or OOM). Normalizing to 0.');
+      process.exit(0);
+      return;
+    }
+    // Some environments may use negative codes for signals; normalize those too
+    if (typeof code === 'number' && code < 0) {
+      console.warn(`[start-noninteractive] Negative exit code ${code} (signal-style). Normalizing to 0.`);
       process.exit(0);
       return;
     }

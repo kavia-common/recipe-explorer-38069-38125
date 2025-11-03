@@ -1,0 +1,2 @@
+Static files placed here are served by CRA at the root path.
+Place assets under public/assets and reference as /assets/... in React.
