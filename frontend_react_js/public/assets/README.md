@@ -1,3 +1,2 @@
-Place runtime-served images here and reference them in React components using absolute paths like /assets/your-image.png.
-
-During CI, if assets are needed for UI rendering, ensure they are copied here prior to start.
+This directory stores static assets served by CRA and referenced via absolute paths like /assets/xxx.png.
+Files here are copied from the repository assets/figmaimages to ensure availability at runtime.

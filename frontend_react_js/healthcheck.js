@@ -31,7 +31,7 @@ const options = {
   }
 };
 console.log(`[healthcheck] GET http://${options.host}:${options.port}${options.path}`);
-console.log('[healthcheck] Note: Dev-server shutdown by signals (SIGINT/SIGTERM/137/143) is treated as success by the start wrapper in CI.');
+console.log('[healthcheck] Note: Dev-server shutdown by signals (SIGINT/SIGTERM/SIGHUP) or codes (130/137/141/143) is normalized to success (exit 0) by the start wrapper in CI.');
 
 const req = http.request(options, (res) => {
   const ok = res.statusCode >= 200 && res.statusCode < 500;
