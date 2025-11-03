@@ -50,3 +50,7 @@ Static assets:
 
 Notes on CI exit codes:
 - When the orchestrator stops the dev server via SIGINT/SIGTERM (or even SIGKILL during teardown), the wrapper normalizes these exits to code 0. This avoids false failures where the server was intentionally terminated (sometimes shown as 137/143). Real build/start failures still exit non-zero.
+
+Additional notes:
+- If your CI forcibly sends `kill -9 -$$` to tear down a process group, this script is designed to only forward signals to the child CRA process and normalize termination to success for dev-server contexts. Avoid group kills when possible.
+- For stability, prefer `npm start` (wrapper) over `react-scripts start` directly in CI.

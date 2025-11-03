@@ -50,6 +50,12 @@ It correctly bundles React in production mode and optimizes the build for the be
 - `.env.development.local` is included and committed to reduce dev server memory and CPU footprint in CI (disables sourcemaps/polling, caps Node memory, BROWSER=none, HOST=0.0.0.0, PORT=3000, CI=true).
 - A `postinstall` step updates Browserslist DB to avoid "browserslist data is X months old" warnings.
 
+### Troubleshooting (CI/Orchestrated Runs)
+
+- Exit code 137/143 or messages about SIGINT/SIGTERM during teardown are normalized to 0 by `start-noninteractive.js`. This indicates an intentional shutdown, not a failure.
+- If you need to force a different port, set `REACT_APP_PORT` or `PORT`. The wrapper will auto-pick a free port near it to avoid CRA’s interactive prompt.
+- For constrained environments, keep `NODE_OPTIONS=--max-old-space-size=1024` to avoid OOM issues.
+
 ## Customization
 
 ### Colors

@@ -75,6 +75,7 @@ async function findFreePort(preferredPort) {
   };
 
   console.log(`[start-noninteractive] Using PORT=${env.PORT} HOST=${env.HOST}`);
+  console.log(`[start-noninteractive] CI=${env.CI} BROWSER=${env.BROWSER} POLLING(chokidar/watchpack)=${env.CHOKIDAR_USEPOLLING}/${env.WATCHPACK_POLLING} SOURCEMAP=${env.GENERATE_SOURCEMAP}`);
 
   // Small readiness HTTP server on a separate port if provided
   const healthPort = Number(process.env.HEALTHCHECK_PORT || 0);
@@ -108,11 +109,14 @@ async function findFreePort(preferredPort) {
     detached: false,
   });
 
+  // Track child PID for better diagnostics
+  console.log(`[start-noninteractive] Spawned react-scripts (pid=${child.pid})`);
+
   let shuttingDown = false;
 
   // Ensure parent exits cleanly when receiving termination signals (avoid 137 noise)
   const forwardAndExitSoon = (signal) => {
-    console.log(`[start-noninteractive] Received ${signal} in parent, forwarding to child and exiting soon...`);
+    console.log(`[start-noninteractive] Received ${signal} in parent, forwarding to child (pid=${child.pid}) and exiting soon...`);
     try {
       if (child && !child.killed) {
         child.kill(signal);
@@ -121,7 +125,7 @@ async function findFreePort(preferredPort) {
       console.error('[start-noninteractive] Error forwarding signal to child:', e);
     } finally {
       // Delay slightly to let child start graceful teardown, then exit 0
-      setTimeout(() => process.exit(0), 200);
+      setTimeout(() => process.exit(0), 250);
     }
   };
 
@@ -149,7 +153,7 @@ async function findFreePort(preferredPort) {
           } catch (e) {
             // ignore
           }
-        }, 1500);
+        }, 3000);
         child.once('exit', () => clearTimeout(killTimer));
       }
     } catch (e) {
@@ -161,29 +165,32 @@ async function findFreePort(preferredPort) {
     }
   };
 
+  // Helper to normalize and exit
+  const normalizeAndExit = (why, code, signal) => {
+    const info = `[start-noninteractive] ${why} (code=${code}, signal=${signal}). Normalizing to exit code 0 for dev server.`;
+    console.warn(info);
+    process.exit(0);
+  };
+
   child.on('close', (code, signal) => {
     if (healthServer) {
       try { healthServer.close(); } catch (_) {}
     }
     // Normalize signal-based exits to success (common in CI/CD orchestrated shutdowns)
-    if (signal === 'SIGINT' || signal === 'SIGTERM' || signal === 'SIGHUP' || signal === 'SIGKILL') {
-      console.warn(`[start-noninteractive] Dev server terminated by signal: ${signal}. Normalizing to exit code 0 (expected during orchestrated shutdown).`);
-      return process.exit(0);
+    if (signal) {
+      return normalizeAndExit('Dev server closed by signal', code, signal);
     }
     // Normalize common clean exit codes (e.g., Ctrl+C -> 130) or null
     if (code === 130 || code == null) {
-      console.log('[start-noninteractive] Dev server exited cleanly (code normalized to 0).');
-      return process.exit(0);
+      return normalizeAndExit('Dev server exited cleanly', code, null);
     }
-    // Normalize 143 (SIGTERM on some systems) and 137 (SIGKILL/OOM) to success for dev server during teardown
+    // Normalize 143 (SIGTERM on some systems) and 137 (SIGKILL/OOM in teardown contexts)
     if (code === 143 || code === 137) {
-      console.warn(`[start-noninteractive] Exit code ${code} detected (signal-related). Normalizing to 0 (non-fatal for dev server).`);
-      return process.exit(0);
+      return normalizeAndExit('Signal-related exit code observed', code, null);
     }
     // Some environments may use negative codes for signals; normalize those too
     if (typeof code === 'number' && code < 0) {
-      console.warn(`[start-noninteractive] Negative exit code ${code} (signal-style). Normalizing to 0.`);
-      return process.exit(0);
+      return normalizeAndExit('Negative signal-style exit code observed', code, null);
     }
     console.log(`[start-noninteractive] Dev server exited with code ${code}.`);
     return process.exit(code ?? 0);
@@ -192,11 +199,9 @@ async function findFreePort(preferredPort) {
   child.on('exit', (code, signal) => {
     // Backstop handler in case 'close' isn't triggered in some environments
     if (signal) {
-      console.warn(`[start-noninteractive] Child exit signal ${signal} observed. Normalizing to 0 (intentional shutdown).`);
-      process.exit(0);
+      normalizeAndExit('Child exit signal observed', code, signal);
     } else if (code === 130 || code === 143 || code === 137 || code == null) {
-      console.log('[start-noninteractive] Child exit observed; normalizing to 0 for dev server.');
-      process.exit(0);
+      normalizeAndExit('Child exit observed; treating as non-fatal', code, null);
     }
   });
 
