@@ -10,12 +10,16 @@
 const http = require('http');
 
 const host = process.env.HOST || '0.0.0.0';
+if (host === '0.0.0.0') {
+  // For local health checks, prefer loopback when host is 0.0.0.0 bind
+  process.env._HEALTH_HOST = '127.0.0.1';
+}
 const port = Number(process.env.PORT || process.env.REACT_APP_PORT || 3000);
 // Support both REACT_APP_HEALTHCHECK_PATH and HEALTHCHECK_PATH
 const path = process.env.REACT_APP_HEALTHCHECK_PATH || process.env.HEALTHCHECK_PATH || '/'; // default to root
 
 const options = {
-  host,
+  host: process.env._HEALTH_HOST || host,
   port,
   path,
   method: 'GET',

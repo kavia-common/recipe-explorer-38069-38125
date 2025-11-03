@@ -149,6 +149,7 @@ async function findFreePort(preferredPort) {
   process.once('SIGTERM', () => forwardAndExitSoon('SIGTERM'));
   process.once('SIGINT', () => forwardAndExitSoon('SIGINT'));
   process.once('SIGHUP', () => forwardAndExitSoon('SIGHUP'));
+  process.once('SIGQUIT', () => forwardAndExitSoon('SIGQUIT'));
 
   // Propagate termination to child from internal shutdown calls as well
   const shutdown = (origin) => {
@@ -201,6 +202,15 @@ async function findFreePort(preferredPort) {
 
     process.exit(0);
   };
+
+  // Emit a simple readiness line once CRA prints "Compiled successfully"
+  // It helps CI probe logs for readiness without polling URL.
+  if (child && child.stdout == null && child.stderr == null) {
+    // stdio: 'inherit' prevents capturing; keep a timer-based log as fallback
+    setTimeout(() => {
+      console.log('[start-noninteractive] If you see "Compiled successfully!" above, the server is ready.');
+    }, 5000);
+  }
 
   child.on('close', (code, signal) => {
     if (healthServer) {
