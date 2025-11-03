@@ -22,6 +22,8 @@ const http = require('http');
 const path = require('path');
 const { spawn } = require('child_process');
 
+process.title = process.title || 'start-noninteractive-react';
+
 function envOrDefault(name, def) {
   return process.env[name] && process.env[name].length ? process.env[name] : def;
 }
@@ -75,7 +77,9 @@ async function findFreePort(preferredPort) {
   };
 
   console.log(`[start-noninteractive] Using PORT=${env.PORT} HOST=${env.HOST}`);
-  console.log(`[start-noninteractive] CI=${env.CI} BROWSER=${env.BROWSER} POLLING(chokidar/watchpack)=${env.CHOKIDAR_USEPOLLING}/${env.WATCHPACK_POLLING} SOURCEMAP=${env.GENERATE_SOURCEMAP}`);
+  console.log(
+    `[start-noninteractive] CI=${env.CI} BROWSER=${env.BROWSER} POLLING(chokidar/watchpack)=${env.CHOKIDAR_USEPOLLING}/${env.WATCHPACK_POLLING} SOURCEMAP=${env.GENERATE_SOURCEMAP}`
+  );
 
   // Small readiness HTTP server on a separate port if provided
   const healthPort = Number(process.env.HEALTHCHECK_PORT || 0);
@@ -84,7 +88,13 @@ async function findFreePort(preferredPort) {
     healthServer = http.createServer((req, res) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ status: 'ok', message: 'frontend dev server starting', port: env.PORT }));
+      res.end(
+        JSON.stringify({
+          status: 'ok',
+          message: 'frontend dev server starting',
+          port: env.PORT,
+        })
+      );
     });
     healthServer.unref();
     healthServer.listen(healthPort, '0.0.0.0', () => {
@@ -113,10 +123,13 @@ async function findFreePort(preferredPort) {
   console.log(`[start-noninteractive] Spawned react-scripts (pid=${child.pid})`);
 
   let shuttingDown = false;
+  let normalized = false;
 
   // Ensure parent exits cleanly when receiving termination signals (avoid 137 noise)
   const forwardAndExitSoon = (signal) => {
-    console.log(`[start-noninteractive] Received ${signal} in parent, forwarding to child (pid=${child.pid}) and exiting soon...`);
+    console.log(
+      `[start-noninteractive] Received ${signal} in parent, forwarding to child (pid=${child.pid}) and exiting soon...`
+    );
     try {
       if (child && !child.killed) {
         child.kill(signal);
@@ -160,13 +173,17 @@ async function findFreePort(preferredPort) {
       console.error('[start-noninteractive] Error during shutdown:', e);
     } finally {
       if (healthServer) {
-        try { healthServer.close(); } catch (_) {}
+        try {
+          healthServer.close();
+        } catch (_) {}
       }
     }
   };
 
   // Helper to normalize and exit
   const normalizeAndExit = (why, code, signal) => {
+    if (normalized) return;
+    normalized = true;
     const info = `[start-noninteractive] ${why} (code=${code}, signal=${signal}). Normalizing to exit code 0 for dev server.`;
     console.warn(info);
     process.exit(0);
@@ -174,7 +191,9 @@ async function findFreePort(preferredPort) {
 
   child.on('close', (code, signal) => {
     if (healthServer) {
-      try { healthServer.close(); } catch (_) {}
+      try {
+        healthServer.close();
+      } catch (_) {}
     }
     // Normalize signal-based exits to success (common in CI/CD orchestrated shutdowns)
     if (signal) {
