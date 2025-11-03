@@ -1,1 +1,2 @@
-Place runtime images and static assets here. Access via absolute paths like /assets/<filename>.
+Place runtime-served images here and reference them as /assets/... from React components.
+Figma images referenced in SignIn should be copied here (see assets/figmaimages in repo).

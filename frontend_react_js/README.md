@@ -10,7 +10,7 @@ Committed stability files:
 - .env.development.local with CI-friendly defaults (BROWSER=none, HOST=0.0.0.0, PORT=3000, NODE_OPTIONS=--max-old-space-size=1024, etc.)
 - public/index.html, manifest.json, robots.txt
 - public/logo192.png, public/logo512.png, public/favicon.ico (placeholders for dev)
-- public/assets/* copied from assets/figmaimages for runtime availability
+- public/assets/* copied from assets/figmaimages for runtime availability (key icons referenced by SignIn are included)
 - start-noninteractive.js includes a heartbeat safety to normalize exit if child exits first in teardown scenarios
 
 Public folder and CI defaults are committed:

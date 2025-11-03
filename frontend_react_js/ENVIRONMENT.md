@@ -26,7 +26,7 @@ Local development & CI defaults:
   - NODE_OPTIONS=--max-old-space-size=1024
   - Optional REACT_APP_HEALTHCHECK_PATH=/
 
-- CRA static assets (images/CSS) for the Sign In UI live in `public/assets/` and are referenced as `/assets/...` paths. The required public files (`public/index.html`, `public/manifest.json`, `public/robots.txt`, and placeholder icons) are included and committed to ensure the dev server starts cleanly and avoid 404s on static fetches. All Figma images used by SignIn are referenced under `/assets/`. If additional images are needed, place them under `public/assets/` and reference using `/assets/...` absolute paths. Placeholders for icons are provided for development environments.
+- CRA static assets (images/CSS) for the Sign In UI live in `public/assets/` and are referenced as `/assets/...` paths. The required public files (`public/index.html`, `public/manifest.json`, `public/robots.txt`, and placeholder icons) are included and committed to ensure the dev server starts cleanly and avoid 404s on static fetches. All Figma images used by SignIn are referenced under `/assets/`. If additional images are needed, place them under `public/assets/` and reference using `/assets/...` absolute paths. Placeholders for icons are provided for development environments. The `.env.development.local` is committed with low-memory, non-interactive defaults.
 - The start/build scripts also honor NODE_OPTIONS=--max-old-space-size=1024 to avoid OOM terminations (exit 137) in constrained environments.
 - During orchestrated shutdowns, if the dev server receives SIGINT/SIGTERM/SIGHUP, the start wrapper normalizes these to exit code 0 to prevent false CI failures. Only genuine build/start errors will exit non-zero.
 

@@ -242,7 +242,8 @@ async function findFreePort(preferredPort) {
 
     const message =
       `[start-noninteractive] ${why} (${mapped}). ` +
-      'Treating as an intentional dev-server stop and normalizing to exit code 0.';
+      'Treating as an intentional dev-server stop and normalizing to exit code 0. ' +
+      'If this occurred during CI teardown, this is expected and not a failure.';
     console.warn(message);
 
     // Explicitly close the readiness server if active
