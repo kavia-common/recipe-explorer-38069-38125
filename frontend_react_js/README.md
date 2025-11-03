@@ -20,7 +20,7 @@ Runs the app in development mode.
 - Uses HOST=0.0.0.0 and PORT=3000 by default (configurable via env)
 - Gracefully handles SIGTERM/SIGINT/SIGHUP and normalizes exit codes 130/137/143 and signal exits to 0 for CI when shutdown is intentional or forced
 - Recognizes SIGKILL/OOM (137) and normalizes during dev-server shutdown paths to avoid false CI failures
-- Optional: set `HEALTHCHECK_PORT` to expose a simple JSON readiness endpoint
+- Optional: set `HEALTHCHECK_PORT` to expose a simple JSON readiness endpoint (returns {status:"ok"})
 - Note: If the orchestrator sends Ctrl+C (SIGINT) or uses a kill command to stop the server, the wrapper converts this to exit code 0. This is expected and not a build failure.
 
 Open http://localhost:3000 to view it in your browser.
@@ -32,7 +32,7 @@ Public files:
 
 ### `npm run healthcheck`
 
-Performs a simple HTTP request to the configured HOST/PORT (or defaults) and exits 0 if reachable. You can also set `HEALTHCHECK_PATH` to adjust the path.
+Performs a simple HTTP request to the configured HOST/PORT (or defaults) and exits 0 if reachable. You can also set `HEALTHCHECK_PATH` or `REACT_APP_HEALTHCHECK_PATH` to adjust the path.
 
 ### `npm test`
 

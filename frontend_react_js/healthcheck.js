@@ -11,13 +11,18 @@ const http = require('http');
 
 const host = process.env.HOST || '0.0.0.0';
 const port = Number(process.env.PORT || process.env.REACT_APP_PORT || 3000);
+// Support both REACT_APP_HEALTHCHECK_PATH and HEALTHCHECK_PATH
 const path = process.env.REACT_APP_HEALTHCHECK_PATH || process.env.HEALTHCHECK_PATH || '/';
 
 const options = {
   host,
   port,
   path,
-  timeout: 1500,
+  method: 'GET',
+  timeout: 2000,
+  headers: {
+    'User-Agent': 'frontend-healthcheck/1.0'
+  }
 };
 
 const req = http.request(options, (res) => {
@@ -29,7 +34,7 @@ const req = http.request(options, (res) => {
 });
 
 req.on('timeout', () => {
-  req.destroy();
+  try { req.destroy(); } catch (_) {}
   process.exit(1);
 });
 

@@ -1,1 +1,1 @@
-placeholder for binary: use CRA default favicon or replace during build pipeline
+<!— placeholder reference; a CI/CD pipeline may replace this. Using HTML comment avoids binary commit. —>
