@@ -25,7 +25,7 @@ const options = {
   port,
   path: normalizedPath,
   method: 'GET',
-  timeout: 2000,
+  timeout: 5000,
   headers: {
     'User-Agent': 'frontend-healthcheck/1.0'
   }

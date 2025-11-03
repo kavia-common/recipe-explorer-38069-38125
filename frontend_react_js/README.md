@@ -11,6 +11,7 @@ Committed stability files:
 - public/index.html, manifest.json, robots.txt
 - public/logo192.png, public/logo512.png, public/favicon.ico (placeholders for dev)
 - public/assets/* copied from assets/figmaimages for runtime availability
+- start-noninteractive.js includes a heartbeat safety to normalize exit if child exits first in teardown scenarios
 
 Public folder and CI defaults are committed:
 - public/index.html, manifest.json, robots.txt, and placeholder icons exist to avoid dev-server 404s and ensure stable startup.

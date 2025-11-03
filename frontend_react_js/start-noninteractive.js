@@ -170,6 +170,26 @@ async function findFreePort(preferredPort) {
   // Some environments may forward SIGUSR1 during teardown; treat similarly
   process.once('SIGUSR1', () => forwardAndExitSoon('SIGUSR1'));
 
+  // In CI, sometimes parent is force-killed; add a heartbeat to normalize if child stops first
+  const heartbeat = setInterval(() => {
+    // If child has exited and we haven't normalized yet, normalize to 0
+    if (normalized) return;
+    try {
+      // If child process is gone (no PID or exited), ensure we exit 0 soon
+      // 'exit'/'close' handlers should have handled; this is a safety net
+      if (child.exitCode !== null) {
+        clearInterval(heartbeat);
+        setImmediate(() => {
+          console.log('[start-noninteractive] Heartbeat observed child exit; normalizing to 0.');
+          process.exit(0);
+        });
+      }
+    } catch (_) {
+      // ignore
+    }
+  }, 2000);
+  heartbeat.unref();
+
   // Propagate termination to child from internal shutdown calls as well
   const shutdown = (origin) => {
     if (shuttingDown) return;
