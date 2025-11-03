@@ -34,8 +34,9 @@ Local development defaults:
   - Disables fast refresh in CI (FAST_REFRESH=false)
   - Graceful SIGTERM/SIGINT handling to exit with code 0 in CI when the process is intentionally stopped.
   - Normalizes child termination by signal or exit code 137 to exit(0) to avoid misleading CI failures when the server is forcibly stopped.
+  - Handles SIGINT/SIGTERM from orchestrators (like CI or docker stop) and ensures the parent process exits with code 0 after forwarding signals to the child dev server.
 - A `postinstall` step updates Browserslist DB to silence "browserslist data is old" warnings in CI logs (tolerant of offline CI; non-fatal).
 
 Static assets:
-- Images used by the Sign In UI are copied into `public/assets/` and referenced as `/assets/...` to ensure CRA serves them without bundling issues.
+- Images used by the Sign In UI are served by CRA. Ensure any referenced images are inside `public/assets/` and referenced as `/assets/...`.
 - Do not import these images via JS imports to keep the bundle minimal; they are static.

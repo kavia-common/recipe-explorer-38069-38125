@@ -10,6 +10,7 @@
  * - Forces HOST=0.0.0.0 for containerized environments.
  * - Auto-selects a free port to avoid CRA interactive prompt.
  * - Handles SIGTERM/SIGINT gracefully to avoid exit code 137 in CI logs.
+ * - Normalizes SIGINT/SIGTERM/137 exits to 0 for CI, while preserving non-zero exit for actual build failures.
  *
  * This prevents the "Something is already running on port 3000. Would you like to run the app on another port?"
  * interactive prompt by ensuring a specific free PORT is set up-front in CI.
@@ -26,16 +27,17 @@ function envOrDefault(name, def) {
 function checkPort(port, host = '0.0.0.0') {
   // Returns a promise that resolves to true if port is free, false if in use
   return new Promise((resolve) => {
-    const server = net.createServer()
-      .once('error', () => resolve(false))
-      .once('listening', () => server.close(() => resolve(true)))
-      .listen(port, host);
+    const server = net.createServer();
+    server.unref(); // don't keep the event loop alive
+    server.once('error', () => resolve(false));
+    server.once('listening', () => server.close(() => resolve(true)));
+    server.listen(port, host);
   });
 }
 
 async function findFreePort(preferredPort) {
   const startPort = Number(preferredPort || 3000);
-  for (let p = startPort; p < startPort + 20; p++) {
+  for (let p = startPort; p < startPort + 32; p++) {
     /* eslint-disable no-await-in-loop */
     const free = await checkPort(p);
     if (free) return String(p);
@@ -62,9 +64,10 @@ async function findFreePort(preferredPort) {
     WATCHPACK_POLLING: envOrDefault('WATCHPACK_POLLING', 'false'),
     GENERATE_SOURCEMAP: envOrDefault('GENERATE_SOURCEMAP', 'false'),
     // Cap Node memory unless already specified
-    NODE_OPTIONS: process.env.NODE_OPTIONS && process.env.NODE_OPTIONS.trim().length
-      ? process.env.NODE_OPTIONS
-      : '--max-old-space-size=1024',
+    NODE_OPTIONS:
+      process.env.NODE_OPTIONS && process.env.NODE_OPTIONS.trim().length
+        ? process.env.NODE_OPTIONS
+        : '--max-old-space-size=1024',
     // Avoid CRA fast refresh overhead in CI-like environments
     FAST_REFRESH: envOrDefault('FAST_REFRESH', 'false'),
   };
@@ -120,7 +123,7 @@ async function findFreePort(preferredPort) {
           if (!child.killed) {
             child.kill('SIGKILL');
           }
-        }, 3000);
+        }, 2500);
         child.once('exit', () => clearTimeout(killTimer));
       }
     } catch (e) {
@@ -130,7 +133,7 @@ async function findFreePort(preferredPort) {
 
   child.on('close', (code, signal) => {
     // Normalize signal-based exits to success (common in CI/CD orchestrated shutdowns)
-    if (signal) {
+    if (signal === 'SIGINT' || signal === 'SIGTERM') {
       console.warn(`[start-noninteractive] Dev server terminated by signal: ${signal}. Normalizing to exit code 0.`);
       process.exit(0);
       return;
