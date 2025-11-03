@@ -144,7 +144,19 @@ async function findFreePort(preferredPort) {
       console.error('[start-noninteractive] Error forwarding signal to child:', e);
     } finally {
       // Delay slightly to let child start graceful teardown, then exit 0
-      setTimeout(() => process.exit(0), 250);
+      // If the orchestrator issues a subsequent SIGKILL to the parent, normalize by planning to exit(0) quickly.
+      const exitSoon = () => {
+        try {
+          // best-effort close
+          if (healthServer) {
+            healthServer.close();
+          }
+        } catch (_) {}
+        process.exit(0);
+      };
+      setTimeout(exitSoon, 200);
+      // Safety timeout to enforce exit even if timers are busy
+      setTimeout(exitSoon, 1000);
     }
   };
 
@@ -227,7 +239,8 @@ async function findFreePort(preferredPort) {
     if (code === 0 || code === 130 || code == null) {
       return normalizeAndExit('Dev server exited cleanly', code, null);
     }
-    // Normalize 143 (SIGTERM) and 137 (SIGKILL/OOM in teardown contexts)
+    // Normalize 143 (SIGTERM) and 137 (SIGKILL/OOM in teardown contexts).
+    // Note: Some orchestrators kill the parent after forwarding SIGINT; child may be SIGKILLed, producing 137.
     if (code === 143 || code === 137) {
       return normalizeAndExit('Signal-related exit code observed', code, null);
     }
