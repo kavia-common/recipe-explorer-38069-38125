@@ -1,0 +1,2 @@
+Place runtime-served images used by React components here and reference them via absolute paths like /assets/filename.png.
+This folder is intentionally committed to guarantee stable dev-server startup in CI.

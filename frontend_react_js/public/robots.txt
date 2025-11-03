@@ -1,3 +1,3 @@
-# Allow all by default
+# See https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Disallow:
