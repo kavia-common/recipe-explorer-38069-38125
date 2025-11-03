@@ -23,6 +23,8 @@ Runs the app in development mode.
 - Optional: set `HEALTHCHECK_PORT` to expose a simple JSON readiness endpoint (returns {status:"ok"})
 - Note: If the orchestrator sends Ctrl+C (SIGINT) or uses a kill command to stop the server, the wrapper converts this to exit code 0. This is expected and not a build failure.
 
+Non-interactive/low-memory defaults are in `.env.development.local` (committed). You can override locally if needed.
+
 Open http://localhost:3000 to view it in your browser.
 
 Public files:

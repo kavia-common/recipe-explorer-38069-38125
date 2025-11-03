@@ -20,11 +20,11 @@ The app reads the following variables (as provided in the container metadata):
 
 Local development & CI defaults:
 - `.env.development.local` is committed to reduce dev server memory/CPU in CI (disables source maps/polling, caps Node memory, disables fast refresh). It does not contain secrets. Variables include:
-  - BROWSER=none, HOST=0.0.0.0, PORT=3000, CI=true
+  - BROWSER=none, HOST=0.0.0.0, PORT=3000, REACT_APP_PORT=3000, CI=true
   - CHOKIDAR_USEPOLLING=false, WATCHPACK_POLLING=false
   - GENERATE_SOURCEMAP=false, FAST_REFRESH=false
   - NODE_OPTIONS=--max-old-space-size=1024
-  - Optional REACT_APP_PORT=3000
+  - Optional REACT_APP_HEALTHCHECK_PATH=/
 
 - CRA static assets (images/CSS) for the Sign In UI live in `public/assets/` and are referenced as `/assets/...` paths.
 - The start/build scripts also honor NODE_OPTIONS=--max-old-space-size=1024 to avoid OOM terminations (exit 137) in constrained environments.
