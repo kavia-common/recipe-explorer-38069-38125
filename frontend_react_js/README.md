@@ -40,7 +40,7 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 ### Environment and CI
 
-- `.env.development.local` is included to reduce dev server memory and CPU footprint in CI (disables sourcemaps/polling, caps Node memory).
+- `.env.development.local` is included and committed to reduce dev server memory and CPU footprint in CI (disables sourcemaps/polling, caps Node memory, BROWSER=none, HOST=0.0.0.0, PORT=3000, CI=true).
 - A `postinstall` step updates Browserslist DB to avoid "browserslist data is X months old" warnings.
 
 ## Customization
