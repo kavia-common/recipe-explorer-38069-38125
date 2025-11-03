@@ -19,7 +19,7 @@ The app reads the following variables (as provided in the container metadata):
 - REACT_APP_EXPERIMENTS_ENABLED
 
 Local development & CI defaults:
-- `.env.development.local` is committed to reduce dev server memory/CPU in CI (disables source maps/polling, caps Node memory to 1024MB, disables fast refresh). It does not contain secrets. Variables include:
+- `.env.development.local` is committed to reduce dev server memory/CPU in CI (disables source maps/polling, caps Node memory to 1024MB, disables fast refresh). It does not contain secrets. Variables include (see committed file in repo):
   - BROWSER=none, HOST=0.0.0.0, PORT=3000, REACT_APP_PORT=3000, CI=true
   - CHOKIDAR_USEPOLLING=false, WATCHPACK_POLLING=false
   - GENERATE_SOURCEMAP=false, FAST_REFRESH=false

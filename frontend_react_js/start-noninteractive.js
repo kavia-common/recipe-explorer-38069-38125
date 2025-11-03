@@ -163,15 +163,25 @@ async function findFreePort(preferredPort) {
     }
   };
 
-  process.once('SIGTERM', () => forwardAndExitSoon('SIGTERM'));
+  // Some CI orchestrators may send SIGTERM then quickly SIGKILL to the entire process group.
+  // Mark normalization immediately on first signal to ensure any subsequent handling exits 0.
+  const markNormalizedOnSignal = (sig) => {
+    if (!normalized) {
+      console.log(`[start-noninteractive] Marking normalized due to ${sig} (orchestrated teardown).`);
+      normalized = true;
+    }
+  };
+
+  process.once('SIGTERM', () => { markNormalizedOnSignal('SIGTERM'); forwardAndExitSoon('SIGTERM'); });
   process.once('SIGINT', () => {
     console.log('[start-noninteractive] SIGINT received (Ctrl+C or orchestrated stop). Normalizing shutdown to exit 0.');
+    markNormalizedOnSignal('SIGINT');
     forwardAndExitSoon('SIGINT');
   });
-  process.once('SIGHUP', () => forwardAndExitSoon('SIGHUP'));
-  process.once('SIGQUIT', () => forwardAndExitSoon('SIGQUIT'));
+  process.once('SIGHUP', () => { markNormalizedOnSignal('SIGHUP'); forwardAndExitSoon('SIGHUP'); });
+  process.once('SIGQUIT', () => { markNormalizedOnSignal('SIGQUIT'); forwardAndExitSoon('SIGQUIT'); });
   // Some environments may forward SIGUSR1 during teardown; treat similarly
-  process.once('SIGUSR1', () => forwardAndExitSoon('SIGUSR1'));
+  process.once('SIGUSR1', () => { markNormalizedOnSignal('SIGUSR1'); forwardAndExitSoon('SIGUSR1'); });
 
   // In CI, sometimes parent is force-killed; add a heartbeat to normalize if child stops first
   const heartbeat = setInterval(() => {
@@ -270,7 +280,7 @@ async function findFreePort(preferredPort) {
       return normalizeAndExit('Dev server closed by signal', code, signal);
     }
     // Normalize common clean/signal-related exit codes that indicate intentional stops
-    const nonFatalCodes = new Set([0, 130, 137, 143, null, undefined]);
+    const nonFatalCodes = new Set([0, 130, 137, 141, 143, null, undefined]);
     if (nonFatalCodes.has(code)) {
       return normalizeAndExit('Dev server exited cleanly (normalized)', code ?? null, null);
     }
