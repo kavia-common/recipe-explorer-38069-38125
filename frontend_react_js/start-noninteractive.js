@@ -236,6 +236,10 @@ async function findFreePort(preferredPort) {
     if (code === 130 || code === 143 || code === 137 || code == null) {
       return normalizeAndExit('Child exit observed; treating as non-fatal', code, null);
     }
+    // If CRA exits with 0, just pass it through
+    if (code === 0) {
+      return normalizeAndExit('Child exited with 0', code, null);
+    }
   });
 
   child.on('error', (err) => {

@@ -12,7 +12,7 @@ const http = require('http');
 const host = process.env.HOST || '0.0.0.0';
 const port = Number(process.env.PORT || process.env.REACT_APP_PORT || 3000);
 // Support both REACT_APP_HEALTHCHECK_PATH and HEALTHCHECK_PATH
-const path = process.env.REACT_APP_HEALTHCHECK_PATH || process.env.HEALTHCHECK_PATH || '/';
+const path = process.env.REACT_APP_HEALTHCHECK_PATH || process.env.HEALTHCHECK_PATH || '/'; // default to root
 
 const options = {
   host,
