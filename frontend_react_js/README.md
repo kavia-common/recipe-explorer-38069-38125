@@ -21,6 +21,7 @@ Runs the app in development mode.
 - Gracefully handles SIGTERM/SIGINT/SIGHUP and normalizes exit codes 130/137/143 and signal exits to 0 for CI when shutdown is intentional or forced
 - Recognizes SIGKILL/OOM (137) and normalizes during dev-server shutdown paths to avoid false CI failures
 - Optional: set `HEALTHCHECK_PORT` to expose a simple JSON readiness endpoint
+- Note: If the orchestrator sends Ctrl+C (SIGINT) or uses a kill command to stop the server, the wrapper converts this to exit code 0. This is expected and not a build failure.
 
 Open http://localhost:3000 to view it in your browser.
 

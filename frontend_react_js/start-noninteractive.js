@@ -12,6 +12,7 @@
  * - Handles SIGTERM/SIGINT gracefully to avoid exit code 137 in CI logs.
  * - Normalizes SIGINT/SIGTERM/137 exits to 0 for CI, while preserving non-zero exit for actual build failures.
  * - Exposes a simple healthcheck HTTP endpoint so CI can verify readiness without parsing logs.
+ * - Static UI assets (images/CSS) should be placed in public/assets and referenced as /assets/... in components.
  *
  * This prevents the "Something is already running on port 3000. Would you like to run the app on another port?"
  * interactive prompt by ensuring a specific free PORT is set up-front in CI.

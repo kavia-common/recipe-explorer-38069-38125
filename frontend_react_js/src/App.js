@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import SignIn from './SignIn';
 
-// PUBLIC_INTERFACE
+/**
+ * PUBLIC_INTERFACE
+ * App is the root component that sets up theme toggling and renders the SignIn screen.
+ * Returns the Sign In UI matching the extracted Figma design, wrapped in a themed container.
+ */
 function App() {
   const [theme, setTheme] = useState('light');
 

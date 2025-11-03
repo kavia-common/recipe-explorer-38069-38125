@@ -4,7 +4,8 @@ import './App.css';
 /**
  * PUBLIC_INTERFACE
  * SignIn component renders the Figma-extracted Sign In screen (11-235) with pixel-perfect parity.
- * It references the root-level assets for CSS variables and images, mirroring interactions from sign-in-11-235.js.
+ * It references the public-level assets for CSS variables and images, mirroring interactions from sign-in-11-235.js.
+ * Static assets in CRA are available at /assets/... ensured via public/assets folder.
  */
 function SignIn() {
   // PUBLIC_INTERFACE
