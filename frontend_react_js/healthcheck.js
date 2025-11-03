@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * PUBLIC_INTERFACE
- * Simple healthcheck script that exits 0 if the frontend host:port is reachable.
+ * Simple healthcheck script to be used by CI to verify the dev server is responding.
+ * Exits 0 if the frontend host:port is reachable (2xx-4xx), non-zero otherwise.
  * Reads HOST/PORT from env; defaults to 0.0.0.0:3000.
  * If HEALTHCHECK_PATH is provided, it will request that path, otherwise GET /.
  */

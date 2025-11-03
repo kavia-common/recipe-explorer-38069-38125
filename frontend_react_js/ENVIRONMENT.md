@@ -41,3 +41,6 @@ Post-install:
 Static assets:
 - Images used by the Sign In UI are served by CRA. Ensure any referenced images are inside `public/assets/` and referenced as `/assets/...`.
 - Do not import these images via JS imports to keep the bundle minimal; they are static.
+
+Notes on CI exit codes:
+- When the orchestrator stops the dev server via SIGINT/SIGTERM, the wrapper normalizes these exits to code 0. This avoids false failures where the server was intentionally terminated (sometimes shown as 137/143). Real build/start failures still exit non-zero.

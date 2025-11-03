@@ -135,8 +135,9 @@ async function findFreePort(preferredPort) {
     console.log(`[start-noninteractive] Initiating shutdown from ${origin}...`);
     try {
       if (child && !child.killed) {
+        // Ask react-scripts to stop gracefully
         child.kill('SIGTERM');
-        // Hard kill as last resort to avoid hanging CI quickly
+        // As a last resort, use SIGKILL but avoid cascading to parent/group
         const killTimer = setTimeout(() => {
           try {
             if (child && !child.killed) {
@@ -146,7 +147,7 @@ async function findFreePort(preferredPort) {
           } catch (e) {
             // ignore
           }
-        }, 1000);
+        }, 1500);
         child.once('exit', () => clearTimeout(killTimer));
       }
     } catch (e) {
@@ -163,7 +164,7 @@ async function findFreePort(preferredPort) {
       try { healthServer.close(); } catch (_) {}
     }
     // Normalize signal-based exits to success (common in CI/CD orchestrated shutdowns)
-    if (signal === 'SIGINT' || signal === 'SIGTERM' || signal === 'SIGHUP') {
+    if (signal === 'SIGINT' || signal === 'SIGTERM' || signal === 'SIGHUP' || signal === 'SIGKILL') {
       console.warn(`[start-noninteractive] Dev server terminated by signal: ${signal}. Normalizing to exit code 0.`);
       return process.exit(0);
     }

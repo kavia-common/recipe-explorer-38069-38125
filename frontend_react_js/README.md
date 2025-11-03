@@ -19,6 +19,7 @@ Runs the app in development mode.
 - Starts in non-interactive CI-friendly mode (no port prompts, no browser launch)
 - Uses HOST=0.0.0.0 and PORT=3000 by default (configurable via env)
 - Gracefully handles SIGTERM/SIGINT/SIGHUP and normalizes exit codes 130/137/143 and signal exits to 0 for CI when shutdown is intentional or forced
+- Recognizes SIGKILL/OOM (137) and normalizes during dev-server shutdown paths to avoid false CI failures
 - Optional: set `HEALTHCHECK_PORT` to expose a simple JSON readiness endpoint
 
 Open http://localhost:3000 to view it in your browser.
