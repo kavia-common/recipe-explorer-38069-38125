@@ -31,8 +31,7 @@ Runs the app in development mode.
 - Recognizes SIGKILL/OOM (137), SIGTERM (143), and SIGINT (130) during dev-server shutdown paths and normalizes these to exit code 0 to avoid false CI failures. Real build errors still exit non-zero.
 - Uses committed .env.development.local to cap Node heap (1024 MB), disable sourcemaps/polling/fast refresh, and set BROWSER/HOST/PORT for non-interactive starts.
 - Avoids process-group re-kills; only signals the CRA child and exits cleanly
-- Optional: set `HEALTHCHECK_PORT` to expose a simple JSON readiness endpoint (returns {status:"ok"})
-- Note: If the orchestrator sends Ctrl+C (SIGINT) or uses a kill command to stop the server, the wrapper converts this to exit code 0. This is expected and not a build failure.
+- Optional: set `HEALTHCHECK_PORT` to expose a simple JSON readiness endpoint (returns {status:"ok"}). Health path for HTTP checks defaults to `/` and can be overridden with `REACT_APP_HEALTHCHECK_PATH` or `HEALTHCHECK_PATH`.
 
 Non-interactive/low-memory defaults are in `.env.development.local` (committed). You can override locally if needed.
 

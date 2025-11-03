@@ -30,6 +30,7 @@ const options = {
     'User-Agent': 'frontend-healthcheck/1.0'
   }
 };
+console.log(`[healthcheck] GET http://${options.host}:${options.port}${options.path}`);
 
 const req = http.request(options, (res) => {
   if (res.statusCode >= 200 && res.statusCode < 500) {
