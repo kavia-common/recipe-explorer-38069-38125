@@ -15,6 +15,10 @@
  * - Static UI assets (images/CSS) should be placed in public/assets and referenced as /assets/... in components.
  *
  * Prevents the CRA interactive port prompt by selecting an available port up-front.
+ *
+ * Notes:
+ * - Some orchestrators issue `kill -9 -$$` to the process group. This script avoids creating a new
+ *   process group and never re-broadcasts signals to the whole group, to prevent unintended SIGKILL cascades.
  */
 
 const net = require('net');
@@ -116,7 +120,7 @@ async function findFreePort(preferredPort) {
   const child = spawn(reactScriptsBin, args, {
     stdio: 'inherit',
     env,
-    detached: false,
+    detached: false, // keep in same group to avoid stray children lingering
   });
 
   // Track child PID for better diagnostics
@@ -184,8 +188,17 @@ async function findFreePort(preferredPort) {
   const normalizeAndExit = (why, code, signal) => {
     if (normalized) return;
     normalized = true;
-    const info = `[start-noninteractive] ${why} (code=${code}, signal=${signal}). Normalizing to exit code 0 for dev server.`;
-    console.warn(info);
+
+    const message =
+      `[start-noninteractive] ${why} (code=${code}, signal=${signal}).` +
+      ' Treating as an intentional dev-server stop and normalizing to exit code 0.';
+    console.warn(message);
+
+    // Explicitly close the readiness server if active
+    if (healthServer) {
+      try { healthServer.close(); } catch (_) {}
+    }
+
     process.exit(0);
   };
 
@@ -218,9 +231,10 @@ async function findFreePort(preferredPort) {
   child.on('exit', (code, signal) => {
     // Backstop handler in case 'close' isn't triggered in some environments
     if (signal) {
-      normalizeAndExit('Child exit signal observed', code, signal);
-    } else if (code === 130 || code === 143 || code === 137 || code == null) {
-      normalizeAndExit('Child exit observed; treating as non-fatal', code, null);
+      return normalizeAndExit('Child exit signal observed', code, signal);
+    }
+    if (code === 130 || code === 143 || code === 137 || code == null) {
+      return normalizeAndExit('Child exit observed; treating as non-fatal', code, null);
     }
   });
 

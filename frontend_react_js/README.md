@@ -20,6 +20,7 @@ Runs the app in development mode.
 - Uses HOST=0.0.0.0 and PORT=3000 by default (configurable via env)
 - Gracefully handles SIGTERM/SIGINT/SIGHUP and normalizes exit codes 130/137/143 and signal exits to 0 for CI when shutdown is intentional or forced
 - Recognizes SIGKILL/OOM (137) and normalizes during dev-server shutdown paths to avoid false CI failures
+- Avoids process-group re-kills; only signals the CRA child and exits cleanly
 - Optional: set `HEALTHCHECK_PORT` to expose a simple JSON readiness endpoint (returns {status:"ok"})
 - Note: If the orchestrator sends Ctrl+C (SIGINT) or uses a kill command to stop the server, the wrapper converts this to exit code 0. This is expected and not a build failure.
 
