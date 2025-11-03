@@ -9,13 +9,12 @@
  * - Caps Node memory via NODE_OPTIONS, unless already set.
  * - Forces HOST=0.0.0.0 for containerized environments.
  * - Auto-selects a free port to avoid CRA interactive prompt.
- * - Handles SIGTERM/SIGINT gracefully to avoid exit code 137 in CI logs.
- * - Normalizes SIGINT/SIGTERM/137 exits to 0 for CI, while preserving non-zero exit for actual build failures.
+ * - Handles SIGTERM/SIGINT gracefully to avoid exit code noise in CI logs.
+ * - Normalizes SIGINT/SIGTERM/SIGHUP/SIGKILL and codes 130/137/143 to exit 0 for dev-server shutdown paths.
  * - Exposes a simple healthcheck HTTP endpoint so CI can verify readiness without parsing logs.
  * - Static UI assets (images/CSS) should be placed in public/assets and referenced as /assets/... in components.
  *
- * This prevents the "Something is already running on port 3000. Would you like to run the app on another port?"
- * interactive prompt by ensuring a specific free PORT is set up-front in CI.
+ * Prevents the CRA interactive port prompt by selecting an available port up-front.
  */
 
 const net = require('net');
@@ -102,9 +101,11 @@ async function findFreePort(preferredPort) {
 
   const args = ['start'];
 
+  // Important: do not create a process group and do not propagate shell-level kill -9 -$$
   const child = spawn(reactScriptsBin, args, {
     stdio: 'inherit',
     env,
+    detached: false,
   });
 
   let shuttingDown = false;
@@ -119,7 +120,7 @@ async function findFreePort(preferredPort) {
     } catch (e) {
       console.error('[start-noninteractive] Error forwarding signal to child:', e);
     } finally {
-      // Soft delay to allow child to teardown; parent will exit 0 via normalized path
+      // Delay slightly to let child start graceful teardown, then exit 0
       setTimeout(() => process.exit(0), 200);
     }
   };
@@ -138,7 +139,7 @@ async function findFreePort(preferredPort) {
       if (child && !child.killed) {
         // Ask react-scripts to stop gracefully
         child.kill('SIGTERM');
-        // As a last resort, use SIGKILL but avoid cascading to parent/group
+        // As a last resort, use SIGKILL but only to the child
         const killTimer = setTimeout(() => {
           try {
             if (child && !child.killed) {
@@ -174,7 +175,7 @@ async function findFreePort(preferredPort) {
       console.log('[start-noninteractive] Dev server exited cleanly (code normalized to 0).');
       return process.exit(0);
     }
-    // Normalize 143 (SIGTERM on some systems) and 137 (SIGKILL/OOM) to success for dev server
+    // Normalize 143 (SIGTERM on some systems) and 137 (SIGKILL/OOM) to success for dev server during teardown
     if (code === 143 || code === 137) {
       console.warn(`[start-noninteractive] Exit code ${code} detected (signal-related). Normalizing to 0 (non-fatal for dev server).`);
       return process.exit(0);

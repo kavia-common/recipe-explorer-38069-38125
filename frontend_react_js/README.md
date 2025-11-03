@@ -25,6 +25,11 @@ Runs the app in development mode.
 
 Open http://localhost:3000 to view it in your browser.
 
+Public files:
+- `public/index.html` is the CRA HTML template with a `<div id="root">` mount point.
+- `public/manifest.json` defines basic PWA metadata (optional).
+- `public/assets/` is where runtime-served images should live and be referenced as `/assets/...`.
+
 ### `npm run healthcheck`
 
 Performs a simple HTTP request to the configured HOST/PORT (or defaults) and exits 0 if reachable. You can also set `HEALTHCHECK_PATH` to adjust the path.

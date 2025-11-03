@@ -38,6 +38,7 @@ Dev server start wrapper:
   - Graceful SIGTERM/SIGINT/SIGHUP handling and normalization of exit codes 130/137/143 and signal exits to 0 to avoid misleading CI failures when the server is intentionally stopped or force-terminated.
   - Explicit logs to reflect successful, intentional shutdown.
   - Optional readiness endpoint when `HEALTHCHECK_PORT` is set, returning `{status:"ok"}`.
+  - Ensures the child process is not force-killed via group kills from the parent (no `kill -9 -$$` usage). Only the child is signaled directly and exits are normalized to 0 when shutdown is orchestrated.
 
 Post-install:
 - A `postinstall` step updates Browserslist DB to silence "browserslist data is old" warnings in CI logs (tolerant of offline CI; non-fatal).

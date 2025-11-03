@@ -1,0 +1,1 @@
+This is a placeholder indicating that a favicon.ico can be added here. The app will work without it.
