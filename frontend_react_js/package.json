@@ -10,6 +10,7 @@
   "scripts": {
     "prestart": "npx --yes update-browserslist-db@latest > /dev/null 2>&1 || true",
     "start": "node ./start-noninteractive.js",
+    "start:direct": "cross-env NODE_OPTIONS=\"${NODE_OPTIONS:- --max-old-space-size=1024 }\" BROWSER=none HOST=0.0.0.0 CHOKIDAR_USEPOLLING=false WATCHPACK_POLLING=false FAST_REFRESH=false PORT=${PORT:-3000} react-scripts start",
     "build": "cross-env NODE_OPTIONS=\"${NODE_OPTIONS:- --max-old-space-size=1024 }\" GENERATE_SOURCEMAP=${GENERATE_SOURCEMAP:-false} react-scripts build",
     "test": "cross-env CI=true react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
