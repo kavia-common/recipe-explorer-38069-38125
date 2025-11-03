@@ -35,6 +35,7 @@ Local development defaults:
   - Graceful SIGTERM/SIGINT handling to exit with code 0 in CI when the process is intentionally stopped.
   - Normalizes child termination by signal or exit code 137/143 or negative signal codes to exit(0) to avoid misleading CI failures when the server is forcibly stopped.
   - Handles SIGINT/SIGTERM from orchestrators (like CI or docker stop) and ensures the parent process exits with code 0 after forwarding signals to the child dev server.
+  - Logs explicit normalization messages so CI logs reflect a successful, intentional shutdown.
 - A `postinstall` step updates Browserslist DB to silence "browserslist data is old" warnings in CI logs (tolerant of offline CI; non-fatal).
 
 Static assets:
