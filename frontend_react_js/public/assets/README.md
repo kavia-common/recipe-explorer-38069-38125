@@ -1,8 +1,6 @@
-This directory hosts static assets used by the React app at runtime.
-Files placed here are served by CRA at /assets/<filename>.
+Static assets for the Sign In UI and other screens.
 
-The SignIn screen uses the following assets copied from the extracted Figma images:
-- figma_image_30_781.png (arrow icon)
-- figma_image_30_811.png (Google icon)
-- figma_image_30_841.png (Facebook icon)
-- figma_image_36_832.png (Battery/status icon)
+Notes:
+- Refer to these assets in React components via absolute paths like /assets/<filename>
+- Do not import these images via JS to keep the bundle minimal.
+- Files in this folder are served statically by CRA during development and production builds.
