@@ -1,2 +1,5 @@
+# PUBLIC_INTERFACE
+# robots.txt for Recipe Explorer
 User-agent: *
 Disallow:
+Sitemap: /sitemap.xml

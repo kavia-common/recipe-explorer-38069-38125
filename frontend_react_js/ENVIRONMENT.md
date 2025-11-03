@@ -54,3 +54,7 @@ Notes on CI exit codes:
 Additional notes:
 - If your CI forcibly sends `kill -9 -$$` to tear down a process group, this script is designed to only forward signals to the child CRA process and normalize termination to success for dev-server contexts. Avoid group kills when possible.
 - For stability, prefer `npm start` (wrapper) over `react-scripts start` directly in CI.
+
+Public files:
+- CRA public folder is provided with `public/index.html`, `public/manifest.json`, and `public/robots.txt`.
+- Figma assets are copied to `public/assets/` and referenced as `/assets/...` by React components.

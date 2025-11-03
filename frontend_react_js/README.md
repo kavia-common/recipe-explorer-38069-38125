@@ -30,7 +30,9 @@ Open http://localhost:3000 to view it in your browser.
 Public files:
 - `public/index.html` is the CRA HTML template with a `<div id="root">` mount point.
 - `public/manifest.json` defines basic PWA metadata (optional).
+- `public/robots.txt` included.
 - `public/assets/` is where runtime-served images should live and be referenced as `/assets/...`.
+- Placeholder icons `logo192.png`, `logo512.png`, and `favicon.ico` are present for development (replace in production).
 
 ### `npm run healthcheck`
 
