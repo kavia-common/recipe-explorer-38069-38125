@@ -1,30 +1,47 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import './App.css';
 
 /**
  * PUBLIC_INTERFACE
- * SignIn component renders a static approximation of the provided Figma sign-in screen.
- * It uses assets placed under /assets and is optimized for performance in dev.
+ * SignIn component renders the Figma-extracted Sign In screen (11-235) with pixel-perfect parity.
+ * It references the root-level assets for CSS variables and images, mirroring interactions from sign-in-11-235.js.
  */
 function SignIn() {
+  // PUBLIC_INTERFACE
+  const handleSignInClick = useCallback((e) => {
+    const btn = e.currentTarget;
+    // Mirror feedback from assets/sign-in-11-235.js
+    btn.style.transform = 'scale(0.99)';
+    setTimeout(() => {
+      btn.style.transform = '';
+    }, 120);
+    // eslint-disable-next-line no-console
+    console.log('[sign-in-11-235] Sign In clicked');
+  }, []);
+
   return (
     <div className="App" style={{ background: 'var(--style-10-background-color)' }}>
       <header className="App-header" style={{ minHeight: 'auto' }}>
+        {/* Root screen container (375x812 per Figma) */}
         <div
           id="screen-sign-in-11-235"
+          className="figma-screen"
           style={{
-            backgroundColor: 'var(--style-10-background-color)',
             width: 375,
             height: 812,
+            background: 'var(--style-10-background-color)',
             position: 'relative',
             overflow: 'hidden',
           }}
           aria-label="Sign In Screen"
+          role="region"
         >
-          <div style={{ position: 'absolute', left: 30, top: 94, width: 155, height: 75 }}>
+          {/* Title Group at left:30, top:94 */}
+          <div className="figma-abs" style={{ left: 30, top: 94, width: 155, height: 75 }}>
+            {/* Hello, */}
             <div
+              className="figma-abs"
               style={{
-                position: 'absolute',
                 left: 0,
                 top: 0,
                 width: 84,
@@ -37,14 +54,16 @@ function SignIn() {
                 fontSize: 30,
                 fontWeight: 600,
                 lineHeight: '45px',
+                letterSpacing: 0,
                 textAlign: 'left',
               }}
             >
               Hello,
             </div>
+            {/* Welcome Back! */}
             <div
+              className="figma-abs"
               style={{
-                position: 'absolute',
                 left: 0,
                 top: 45,
                 width: 155,
@@ -57,6 +76,7 @@ function SignIn() {
                 fontSize: 20,
                 fontWeight: 400,
                 lineHeight: '30px',
+                letterSpacing: 0,
                 textAlign: 'left',
               }}
             >
@@ -64,13 +84,14 @@ function SignIn() {
             </div>
           </div>
 
-          <div style={{ position: 'absolute', left: 30, top: 226, width: 315, height: 81 }}>
+          {/* Input Email */}
+          <div className="figma-abs" style={{ left: 30, top: 226, width: 315, height: 81 }}>
             <div
+              className="figma-abs"
               style={{
-                position: 'absolute',
                 left: 0,
                 top: 0,
-                width: 200,
+                width: 38,
                 height: 21,
                 color: 'var(--typo-66-color)',
                 fontFamily: 'Poppins, sans-serif',
@@ -84,8 +105,9 @@ function SignIn() {
               Email
             </div>
             <div
+              id="rect-30-585"
+              className="figma-abs"
               style={{
-                position: 'absolute',
                 left: 0,
                 top: 26,
                 width: 315,
@@ -93,14 +115,16 @@ function SignIn() {
                 border: '1.5px solid var(--style-30-border-color)',
                 borderRadius: 10,
                 background: 'transparent',
+                boxSizing: 'border-box',
               }}
             />
             <div
+              id="ph-30-585"
+              className="figma-abs"
               style={{
-                position: 'absolute',
                 left: 20,
                 top: 45,
-                width: 200,
+                width: 61,
                 height: 17,
                 color: 'var(--typo-65-color)',
                 fontFamily: 'Poppins, sans-serif',
@@ -109,19 +133,22 @@ function SignIn() {
                 lineHeight: '16.5px',
                 letterSpacing: 0,
                 textAlign: 'left',
+                userSelect: 'none',
+                pointerEvents: 'none',
               }}
             >
               Enter Email
             </div>
           </div>
 
-          <div style={{ position: 'absolute', left: 30, top: 337, width: 315, height: 81 }}>
+          {/* Input Password */}
+          <div className="figma-abs" style={{ left: 30, top: 337, width: 315, height: 81 }}>
             <div
+              className="figma-abs"
               style={{
-                position: 'absolute',
                 left: 0,
                 top: 0,
-                width: 200,
+                width: 107,
                 height: 21,
                 color: 'var(--typo-66-color)',
                 fontFamily: 'Poppins, sans-serif',
@@ -135,8 +162,9 @@ function SignIn() {
               Enter Password
             </div>
             <div
+              id="rect-30-590"
+              className="figma-abs"
               style={{
-                position: 'absolute',
                 left: 0,
                 top: 26,
                 width: 315,
@@ -144,14 +172,16 @@ function SignIn() {
                 border: '1.5px solid var(--style-30-border-color)',
                 borderRadius: 10,
                 background: 'transparent',
+                boxSizing: 'border-box',
               }}
             />
             <div
+              id="ph-30-590"
+              className="figma-abs"
               style={{
-                position: 'absolute',
                 left: 20,
                 top: 45,
-                width: 200,
+                width: 84,
                 height: 17,
                 color: 'var(--typo-65-color)',
                 fontFamily: 'Poppins, sans-serif',
@@ -160,19 +190,22 @@ function SignIn() {
                 lineHeight: '16.5px',
                 letterSpacing: 0,
                 textAlign: 'left',
+                userSelect: 'none',
+                pointerEvents: 'none',
               }}
             >
               Enter Password
             </div>
           </div>
 
-          <div style={{ position: 'absolute', left: 40, top: 438, width: 200, height: 17 }}>
+          {/* Forgot Password */}
+          <div className="figma-abs" style={{ left: 40, top: 438, width: 97, height: 17 }}>
             <div
+              className="figma-abs"
               style={{
-                position: 'absolute',
                 left: 0,
                 top: 0,
-                width: 200,
+                width: 97,
                 height: 17,
                 color: 'var(--typo-62-color)',
                 fontFamily: 'Poppins, sans-serif',
@@ -187,11 +220,13 @@ function SignIn() {
             </div>
           </div>
 
+          {/* Sign In Button */}
           <button
             id="bigbtn-54-668"
+            data-role="sign-in-btn"
             type="button"
+            className="figma-abs"
             style={{
-              position: 'absolute',
               left: 30,
               top: 480,
               width: 315,
@@ -205,24 +240,25 @@ function SignIn() {
               justifyContent: 'center',
               gap: 12,
               cursor: 'pointer',
-              color: 'var(--typo-58-color)',
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: 16,
-              fontWeight: 600,
-              lineHeight: '24px',
               transition: 'filter 0.15s ease, transform 0.05s ease',
             }}
-            onClick={(e) => {
-              const btn = e.currentTarget;
-              btn.style.transform = 'scale(0.99)';
-              setTimeout(() => (btn.style.transform = ''), 120);
-              // placeholder interaction
-              // eslint-disable-next-line no-console
-              console.log('[SignIn] Sign In clicked');
-            }}
+            onClick={handleSignInClick}
             aria-label="Sign In"
           >
-            <span>Sign In</span>
+            <span
+              className="btn-label"
+              style={{
+                color: 'var(--typo-58-color)',
+                fontFamily: 'Poppins, sans-serif',
+                fontSize: 16,
+                fontWeight: 600,
+                lineHeight: '24px',
+                letterSpacing: 0,
+                textAlign: 'center',
+              }}
+            >
+              Sign In
+            </span>
             <img
               alt="Arrow Right"
               src="/assets/figma_image_30_781.png"
@@ -230,23 +266,15 @@ function SignIn() {
             />
           </button>
 
-          <div style={{ position: 'absolute', left: 90, top: 560, width: 195, height: 17 }}>
+          {/* Separator lines + text */}
+          <div id="line-group-12-139" className="figma-abs" style={{ left: 90, top: 560, width: 195, height: 17 }}>
+            <div className="figma-abs" style={{ left: 0, top: 9, width: 50, height: 0, borderTop: '1px solid var(--style-28-border-color)', opacity: 0.9 }} />
             <div
+              className="figma-abs"
               style={{
-                position: 'absolute',
-                left: 0,
-                top: 9,
-                width: 50,
-                height: 0,
-                borderTop: '1px solid var(--style-28-border-color)',
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
                 left: 57,
                 top: 0,
-                width: 120,
+                width: 81,
                 height: 17,
                 color: 'var(--typo-64-color)',
                 fontFamily: 'Poppins, sans-serif',
@@ -255,26 +283,19 @@ function SignIn() {
                 lineHeight: '16.5px',
                 letterSpacing: 0,
                 textAlign: 'left',
+                opacity: 0.9,
               }}
             >
               Or Sign in With
             </div>
-            <div
-              style={{
-                position: 'absolute',
-                left: 145,
-                top: 9,
-                width: 50,
-                height: 0,
-                borderTop: '1px solid var(--style-28-border-color)',
-              }}
-            />
+            <div className="figma-abs" style={{ left: 145, top: 9, width: 50, height: 0, borderTop: '1px solid var(--style-28-border-color)', opacity: 0.9 }} />
           </div>
 
-          <div style={{ position: 'absolute', left: 131, top: 597, width: 44, height: 44 }}>
+          {/* Social Buttons */}
+          <div className="figma-abs" style={{ left: 131, top: 597, width: 44, height: 44 }}>
             <div
+              className="figma-abs"
               style={{
-                position: 'absolute',
                 left: 0,
                 top: 0,
                 width: 44,
@@ -287,14 +308,15 @@ function SignIn() {
             <img
               alt="Google Icon"
               src="/assets/figma_image_30_811.png"
-              style={{ position: 'absolute', left: 12, top: 12, width: 20, height: 20 }}
+              className="figma-abs"
+              style={{ left: 12, top: 12, width: 20, height: 20 }}
             />
           </div>
 
-          <div style={{ position: 'absolute', left: 200, top: 597, width: 44, height: 44 }}>
+          <div className="figma-abs" style={{ left: 200, top: 597, width: 44, height: 44 }}>
             <div
+              className="figma-abs"
               style={{
-                position: 'absolute',
                 left: 0,
                 top: 0,
                 width: 44,
@@ -307,13 +329,15 @@ function SignIn() {
             <img
               alt="Facebook Icon"
               src="/assets/figma_image_30_841.png"
-              style={{ position: 'absolute', left: 12, top: 12, width: 20, height: 20 }}
+              className="figma-abs"
+              style={{ left: 12, top: 12, width: 20, height: 20 }}
             />
           </div>
 
+          {/* Sign up text */}
           <div
+            className="figma-abs"
             style={{
-              position: 'absolute',
               left: 99,
               top: 696,
               width: 177,
@@ -330,16 +354,19 @@ function SignIn() {
             Don’t have an account? Sign up
           </div>
 
+          {/* Status bar icons */}
           <img
             alt="Battery"
             src="/assets/figma_image_36_832.png"
-            style={{ position: 'absolute', left: 336, top: 16, width: 24, height: 12 }}
+            className="figma-abs"
+            style={{ left: 336, top: 16, width: 24, height: 12 }}
           />
 
-          <div style={{ position: 'absolute', left: 0, top: 778, width: 375, height: 34 }}>
+          {/* Home indicator */}
+          <div className="figma-abs" style={{ left: 0, top: 778, width: 375, height: 34 }}>
             <div
+              className="figma-abs"
               style={{
-                position: 'absolute',
                 left: 120,
                 top: 21,
                 width: 135,

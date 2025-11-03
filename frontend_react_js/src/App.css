@@ -128,6 +128,27 @@
   }
 }
 
+/* Figma helper classes to mirror assets/common.css minimal subset */
+.figma-screen {
+  position: relative;
+  overflow: hidden;
+}
+
+.figma-abs {
+  position: absolute;
+}
+
+/* Hover/active for the primary CTA to mirror assets/sign-in-11-235.css */
+#bigbtn-54-668 {
+  transition: filter 0.15s ease, transform 0.05s ease;
+}
+#bigbtn-54-668:hover {
+  filter: brightness(0.98);
+}
+#bigbtn-54-668:active {
+  transform: translateY(1px);
+}
+
 /* Responsive design for mobile */
 @media (max-width: 768px) {
   .theme-toggle {
