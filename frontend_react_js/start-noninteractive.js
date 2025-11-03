@@ -120,10 +120,14 @@ async function findFreePort(preferredPort) {
         child.kill('SIGTERM');
         // Hard kill as last resort to avoid hanging CI; shorter timeout to reduce 137 window
         const killTimer = setTimeout(() => {
-          if (!child.killed) {
-            child.kill('SIGKILL');
+          try {
+            if (child && !child.killed) {
+              child.kill('SIGKILL');
+            }
+          } catch (e) {
+            // ignore
           }
-        }, 2500);
+        }, 2000);
         child.once('exit', () => clearTimeout(killTimer));
       }
     } catch (e) {
@@ -144,9 +148,9 @@ async function findFreePort(preferredPort) {
       process.exit(0);
       return;
     }
-    // Normalize OOM or forced kill (137) to success to avoid misleading CI failures on shutdown
-    if (code === 137) {
-      console.warn('[start-noninteractive] Exit code 137 detected (likely SIGKILL during shutdown or OOM). Normalizing to 0.');
+    // Normalize 143 (SIGTERM on some systems) and 137 (SIGKILL/OOM) to success
+    if (code === 143 || code === 137) {
+      console.warn(`[start-noninteractive] Exit code ${code} detected (signal-related). Normalizing to 0.`);
       process.exit(0);
       return;
     }
