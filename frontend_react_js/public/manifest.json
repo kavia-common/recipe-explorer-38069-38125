@@ -1,12 +1,7 @@
 {
-  "short_name": "RecipeExplorer",
-  "name": "Recipe Explorer",
+  "short_name": "react-kavia",
+  "name": "React Kavia Template",
   "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 48x48 32x32 16x16",
-      "type": "image/x-icon"
-    },
     {
       "src": "logo192.png",
       "type": "image/png",
@@ -20,6 +15,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#129575",
+  "theme_color": "#2563EB",
   "background_color": "#ffffff"
 }
