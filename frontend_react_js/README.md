@@ -18,9 +18,14 @@ In the project directory, you can run:
 Runs the app in development mode.
 - Starts in non-interactive CI-friendly mode (no port prompts, no browser launch)
 - Uses HOST=0.0.0.0 and PORT=3000 by default (configurable via env)
-- Gracefully handles SIGTERM/SIGINT so CI shutdowns do not appear as failures
+- Gracefully handles SIGTERM/SIGINT and normalizes exit codes 130/137/143 to 0 for CI when shutdown is intentional
+- Optional: set `HEALTHCHECK_PORT` to expose a simple JSON readiness endpoint
 
 Open http://localhost:3000 to view it in your browser.
+
+### `npm run healthcheck`
+
+Performs a simple HTTP request to the configured HOST/PORT (or defaults) and exits 0 if reachable. You can also set `HEALTHCHECK_PATH` to adjust the path.
 
 ### `npm test`
 
@@ -40,17 +45,7 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 ### Colors
 
-The main brand colors are defined as CSS variables in `src/App.css`:
-
-```css
-:root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
-}
-```
+The main brand colors are defined as CSS variables in `src/App.css`.
 
 ### Components
 

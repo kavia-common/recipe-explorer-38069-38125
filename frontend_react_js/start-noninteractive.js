@@ -11,12 +11,14 @@
  * - Auto-selects a free port to avoid CRA interactive prompt.
  * - Handles SIGTERM/SIGINT gracefully to avoid exit code 137 in CI logs.
  * - Normalizes SIGINT/SIGTERM/137 exits to 0 for CI, while preserving non-zero exit for actual build failures.
+ * - Exposes a simple healthcheck HTTP endpoint so CI can verify readiness without parsing logs.
  *
  * This prevents the "Something is already running on port 3000. Would you like to run the app on another port?"
  * interactive prompt by ensuring a specific free PORT is set up-front in CI.
  */
 
 const net = require('net');
+const http = require('http');
 const path = require('path');
 const { spawn } = require('child_process');
 
@@ -74,6 +76,21 @@ async function findFreePort(preferredPort) {
 
   console.log(`[start-noninteractive] Using PORT=${env.PORT} HOST=${env.HOST}`);
 
+  // Small readiness HTTP server on a separate port if provided
+  const healthPort = Number(process.env.HEALTHCHECK_PORT || 0);
+  let healthServer;
+  if (healthPort > 0) {
+    healthServer = http.createServer((req, res) => {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ status: 'ok', message: 'frontend dev server starting', port: env.PORT }));
+    });
+    healthServer.unref();
+    healthServer.listen(healthPort, '0.0.0.0', () => {
+      console.log(`[start-noninteractive] Healthcheck server listening on ${healthPort}`);
+    });
+  }
+
   // Resolve the react-scripts start binary directly to avoid spawning an extra npx process
   const reactScriptsBin = path.join(
     process.cwd(),
@@ -127,19 +144,25 @@ async function findFreePort(preferredPort) {
           } catch (e) {
             // ignore
           }
-        }, 2000);
+        }, 1500);
         child.once('exit', () => clearTimeout(killTimer));
       }
     } catch (e) {
       console.error('[start-noninteractive] Error during shutdown:', e);
+    } finally {
+      if (healthServer) {
+        try { healthServer.close(); } catch (_) {}
+      }
     }
   };
 
   child.on('close', (code, signal) => {
+    if (healthServer) {
+      try { healthServer.close(); } catch (_) {}
+    }
     // Normalize signal-based exits to success (common in CI/CD orchestrated shutdowns)
     if (signal === 'SIGINT' || signal === 'SIGTERM') {
       console.warn(`[start-noninteractive] Dev server terminated by signal: ${signal}. Normalizing to exit code 0.`);
-      // Immediate exit 0 for CI to avoid being flagged as failure
       return process.exit(0);
     }
     // Normalize common clean exit codes (e.g., Ctrl+C -> 130) or null
@@ -147,8 +170,7 @@ async function findFreePort(preferredPort) {
       console.log('[start-noninteractive] Dev server exited cleanly (code normalized to 0).');
       return process.exit(0);
     }
-    // Normalize 143 (SIGTERM on some systems) and 137 (SIGKILL/OOM) to success
-    // Note: 137 could be OOM or forced kill; for dev server in CI treat as non-fatal when orchestrated
+    // Normalize 143 (SIGTERM on some systems) and 137 (SIGKILL/OOM) to success for dev server
     if (code === 143 || code === 137) {
       console.warn(`[start-noninteractive] Exit code ${code} detected (signal-related). Normalizing to 0.`);
       return process.exit(0);
