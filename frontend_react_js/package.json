@@ -8,8 +8,8 @@
     "react-scripts": "^5.0.1"
   },
   "scripts": {
-    "start": "cross-env NODE_OPTIONS=\"${NODE_OPTIONS:- --max-old-space-size=1024 }\" react-scripts start --watch-options ignored=**/node_modules/**,public/**",
-    "build": "cross-env NODE_OPTIONS=\"${NODE_OPTIONS:- --max-old-space-size=1024 }\" react-scripts build",
+    "start": "cross-env NODE_OPTIONS=\"${NODE_OPTIONS:- --max-old-space-size=1024 }\" CHOKIDAR_USEPOLLING=false WATCHPACK_POLLING=false BROWSER=none react-scripts start",
+    "build": "cross-env NODE_OPTIONS=\"${NODE_OPTIONS:- --max-old-space-size=1024 }\" GENERATE_SOURCEMAP=${GENERATE_SOURCEMAP:-false} react-scripts build",
     "test": "cross-env CI=true react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "healthcheck": "node -e \"process.exit(0)\""
