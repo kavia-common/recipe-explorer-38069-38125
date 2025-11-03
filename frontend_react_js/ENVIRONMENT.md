@@ -27,4 +27,5 @@ Local development defaults:
   - Disables heavy polling (CHOKIDAR_USEPOLLING=false, WATCHPACK_POLLING=false)
   - Disables fast refresh in CI (FAST_REFRESH=false)
   - Graceful SIGTERM/SIGINT handling to exit with code 0 in CI when the process is intentionally stopped (prevents exit 137 noise)
-- A `postinstall` step updates Browserslist DB to silence "browserslist data is old" warnings in CI logs.
+- A `postinstall` step updates Browserslist DB to silence "browserslist data is old" warnings in CI logs (tolerant of offline CI; non-fatal).
+- Graceful shutdown: start-noninteractive.js maps SIGTERM/SIGKILL exits to 0, preventing misleading exit 137 failures when CI stops the dev server intentionally.
