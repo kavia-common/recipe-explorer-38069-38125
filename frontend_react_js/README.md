@@ -60,6 +60,7 @@ Public files:
 ### `npm run healthcheck`
 
 Performs a simple HTTP request to the configured HOST/PORT (or defaults) and exits 0 if reachable. You can also set `HEALTHCHECK_PATH` or `REACT_APP_HEALTHCHECK_PATH` to adjust the path.
+If you enable the internal readiness server by setting `HEALTHCHECK_PORT`, the wrapper serves `{"status":"ok"}` on that port and logs the primary port used by CRA.
 
 ### `npm test`
 

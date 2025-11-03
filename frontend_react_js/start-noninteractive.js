@@ -229,9 +229,17 @@ async function findFreePort(preferredPort) {
     if (normalized) return;
     normalized = true;
 
+    // Map common codes/signals to a human-friendly reason
+    const mapped =
+      signal
+        ? `signal=${signal}`
+        : (code === 130 || code === 143 || code === 137 || code === 0 || code == null)
+          ? `code=${code ?? 'null'} (expected during teardown)`
+          : `code=${code}`;
+
     const message =
-      `[start-noninteractive] ${why} (code=${code}, signal=${signal}).` +
-      ' Treating as an intentional dev-server stop and normalizing to exit code 0.';
+      `[start-noninteractive] ${why} (${mapped}). ` +
+      'Treating as an intentional dev-server stop and normalizing to exit code 0.';
     console.warn(message);
 
     // Explicitly close the readiness server if active

@@ -1,1 +1,1 @@
-# placeholder to ensure directory exists in VCS
+# Static assets for runtime (figma images etc.). Files are referenced via /assets/... paths.
