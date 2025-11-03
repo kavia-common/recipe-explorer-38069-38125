@@ -38,6 +38,7 @@ const req = http.request(options, (res) => {
   if (ok) {
     process.exit(0);
   } else {
+    console.error(`[healthcheck] Unhealthy response code: ${res.statusCode}`);
     process.exit(1);
   }
 });

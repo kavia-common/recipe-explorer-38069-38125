@@ -264,6 +264,7 @@ function SignIn() {
               alt="Arrow Right"
               src="/assets/figma_image_30_781.png"
               style={{ width: 20, height: 20 }}
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
           </button>
 

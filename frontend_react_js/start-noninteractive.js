@@ -164,7 +164,10 @@ async function findFreePort(preferredPort) {
   };
 
   process.once('SIGTERM', () => forwardAndExitSoon('SIGTERM'));
-  process.once('SIGINT', () => forwardAndExitSoon('SIGINT'));
+  process.once('SIGINT', () => {
+    console.log('[start-noninteractive] SIGINT received (Ctrl+C or orchestrated stop). Normalizing shutdown to exit 0.');
+    forwardAndExitSoon('SIGINT');
+  });
   process.once('SIGHUP', () => forwardAndExitSoon('SIGHUP'));
   process.once('SIGQUIT', () => forwardAndExitSoon('SIGQUIT'));
   // Some environments may forward SIGUSR1 during teardown; treat similarly
