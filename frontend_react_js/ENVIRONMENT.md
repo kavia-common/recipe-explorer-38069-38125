@@ -28,7 +28,7 @@ Local development & CI defaults:
 
 - CRA static assets (images/CSS) for the Sign In UI live in `public/assets/` and are referenced as `/assets/...` paths. The required public files (`public/index.html`, `public/manifest.json`, `public/robots.txt`, and placeholder icons) are included to ensure the dev server starts cleanly and avoid 404s on static fetches. All Figma images used by SignIn are copied to `public/assets/`. If additional images are needed, place them under `public/assets/` and reference using `/assets/...` absolute paths.
 - The start/build scripts also honor NODE_OPTIONS=--max-old-space-size=1024 to avoid OOM terminations (exit 137) in constrained environments.
-- During orchestrated shutdowns, if the dev server receives SIGINT/SIGTERM/SIGHUP or even a SIGKILL from the parent, the start wrapper normalizes these to exit code 0 to prevent false CI failures. Only genuine build/start errors will exit non-zero.
+- During orchestrated shutdowns, if the dev server receives SIGINT/SIGTERM/SIGHUP, the start wrapper normalizes these to exit code 0 to prevent false CI failures. Only genuine build/start errors will exit non-zero.
 
 Dev server start wrapper:
 - The dev server is started via `start-noninteractive.js`, which enforces:
@@ -39,7 +39,7 @@ Dev server start wrapper:
   - Graceful SIGTERM/SIGINT/SIGHUP handling and normalization of exit codes 130/137/143 and signal exits to 0 to avoid misleading CI failures when the server is intentionally stopped or force-terminated.
   - Explicit logs to reflect successful, intentional shutdown.
   - Optional readiness endpoint when `HEALTHCHECK_PORT` is set, returning `{status:"ok"}`.
-  - Ensures the child process is not force-killed via group kills from the parent (no `kill -9 -$$` usage). Only the child is signaled directly and exits are normalized to 0 when shutdown is orchestrated.
+  - Non-interactive port selection avoids CRA prompts; it auto-picks a free port starting from REACT_APP_PORT/PORT (default 3000).
 
 Post-install:
 - A `postinstall` step updates Browserslist DB to silence "browserslist data is old" warnings in CI logs (tolerant of offline CI; non-fatal).
@@ -51,7 +51,7 @@ Static assets:
 
 Notes on CI exit codes:
 - When the orchestrator stops the dev server via SIGINT/SIGTERM (or even SIGKILL during teardown), the wrapper normalizes these exits to code 0. This avoids false failures where the server was intentionally terminated (sometimes shown as 137/143). Real build/start failures still exit non-zero.
-- If the orchestrator uses a process-group kill (e.g., `kill -9 -$$`), the wrapper will only ever forward signals directly to the CRA child and will not re-issue group-wide kills, preventing cascading SIGKILLs.
+- The wrapper signals the CRA child directly and exits cleanly, avoiding process-group kill patterns. Orchestrated stops (SIGINT/SIGTERM) are treated as intentional and normalized to exit code 0.
 
 Additional notes:
 - For stability, prefer `npm start` (wrapper) over `react-scripts start` directly in CI.

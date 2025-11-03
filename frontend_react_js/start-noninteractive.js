@@ -10,7 +10,7 @@
  * - Forces HOST=0.0.0.0 for containerized environments.
  * - Auto-selects a free port to avoid CRA interactive prompt.
  * - Handles SIGTERM/SIGINT gracefully to avoid exit code noise in CI logs.
- * - Normalizes SIGINT/SIGTERM/SIGHUP/SIGKILL and codes 130/137/143 to exit 0 for dev-server shutdown paths.
+ * - Normalizes SIGINT/SIGTERM/SIGHUP and codes 130/137/143 to exit 0 for dev-server shutdown paths.
  * - Exposes a simple healthcheck HTTP endpoint so CI can verify readiness without parsing logs.
  * - Static UI assets (images/CSS) should be placed in public/assets and referenced as /assets/... in components.
  *
@@ -173,7 +173,7 @@ async function findFreePort(preferredPort) {
           } catch (e) {
             // ignore
           }
-        }, 3000);
+        }, 5000); // slightly longer to allow CRA to close websockets etc.
         child.once('exit', () => clearTimeout(killTimer));
       }
     } catch (e) {
@@ -202,37 +202,34 @@ async function findFreePort(preferredPort) {
       try { healthServer.close(); } catch (_) {}
     }
 
-    process.exit(0);
+    // Exit on next tick to let stdio flush
+    setImmediate(() => process.exit(0));
   };
 
-  // Emit a simple readiness line once CRA prints "Compiled successfully"
-  // It helps CI probe logs for readiness without polling URL.
+  // Log reminder of readiness if stdio inherited (cannot intercept child stdout)
   if (child && child.stdout == null && child.stderr == null) {
-    // stdio: 'inherit' prevents capturing; keep a timer-based log as fallback
     setTimeout(() => {
-      console.log('[start-noninteractive] If you see "Compiled successfully!" above, the server is ready.');
-    }, 5000);
+      console.log('[start-noninteractive] If you see "Compiled successfully" above, the server is ready.');
+    }, 4000);
   }
 
   child.on('close', (code, signal) => {
     if (healthServer) {
-      try {
-        healthServer.close();
-      } catch (_) {}
+      try { healthServer.close(); } catch (_) {}
     }
-    // Normalize signal-based exits to success (common in CI/CD orchestrated shutdowns)
+    // Normalize signal-based exits to success (common in orchestrated shutdowns)
     if (signal) {
       return normalizeAndExit('Dev server closed by signal', code, signal);
     }
     // Normalize common clean exit codes (e.g., Ctrl+C -> 130) or null
-    if (code === 130 || code == null) {
+    if (code === 0 || code === 130 || code == null) {
       return normalizeAndExit('Dev server exited cleanly', code, null);
     }
-    // Normalize 143 (SIGTERM on some systems) and 137 (SIGKILL/OOM in teardown contexts)
+    // Normalize 143 (SIGTERM) and 137 (SIGKILL/OOM in teardown contexts)
     if (code === 143 || code === 137) {
       return normalizeAndExit('Signal-related exit code observed', code, null);
     }
-    // Some environments may use negative codes for signals; normalize those too
+    // Negative codes can indicate signal exits in some environments
     if (typeof code === 'number' && code < 0) {
       return normalizeAndExit('Negative signal-style exit code observed', code, null);
     }
@@ -241,16 +238,12 @@ async function findFreePort(preferredPort) {
   });
 
   child.on('exit', (code, signal) => {
-    // Backstop handler in case 'close' isn't triggered in some environments
+    // Backstop handler in case 'close' isn't triggered
     if (signal) {
       return normalizeAndExit('Child exit signal observed', code, signal);
     }
-    if (code === 130 || code === 143 || code === 137 || code == null) {
+    if (code === 0 || code === 130 || code === 143 || code === 137 || code == null) {
       return normalizeAndExit('Child exit observed; treating as non-fatal', code, null);
-    }
-    // If CRA exits with 0, just pass it through
-    if (code === 0) {
-      return normalizeAndExit('Child exited with 0', code, null);
     }
   });
 
