@@ -6,6 +6,12 @@ Note: This app uses a non-interactive start wrapper that normalizes SIGINT/SIGTE
 
 This project provides a minimal React template with a clean, modern UI and minimal dependencies.
 
+Committed stability files:
+- .env.development.local with CI-friendly defaults (BROWSER=none, HOST=0.0.0.0, PORT=3000, NODE_OPTIONS=--max-old-space-size=1024, etc.)
+- public/index.html, manifest.json, robots.txt
+- public/logo192.svg, public/logo512.svg, public/favicon.svg
+- public/assets/* copied from assets/figmaimages for runtime availability
+
 Public folder and CI defaults are committed:
 - public/index.html, manifest.json, robots.txt, and placeholder icons exist to avoid dev-server 404s and ensure stable startup.
 - .env.development.local caps Node heap (1024 MB), disables sourcemaps/polling/fast refresh, and sets CI-friendly host/port to avoid OOM (137) and interactive prompts.
