@@ -1,7 +1,12 @@
 {
-  "short_name": "RecipeApp",
+  "short_name": "Recipes",
   "name": "Recipe Explorer",
   "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "48x48 32x32 16x16",
+      "type": "image/x-icon"
+    },
     {
       "src": "logo192.png",
       "type": "image/png",
