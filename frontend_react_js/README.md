@@ -4,6 +4,11 @@ Note: This app uses a non-interactive start wrapper that normalizes SIGINT/SIGTE
 
 This project provides a minimal React template with a clean, modern UI and minimal dependencies.
 
+Public folder and CI defaults are committed:
+- public/index.html, manifest.json, robots.txt, and placeholder icons exist to avoid dev-server 404s and ensure stable startup.
+- .env.development.local caps Node heap (1024 MB), disables sourcemaps/polling/fast refresh, and sets CI-friendly host/port to avoid OOM (137) and interactive prompts.
+- All Figma images referenced by components are available under public/assets so React can serve them by /assets/... URLs.
+
 ## Features
 
 - Lightweight: No heavy UI frameworks - uses only vanilla CSS and React

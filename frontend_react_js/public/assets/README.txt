@@ -1,1 +1,1 @@
-Static assets for runtime (images/CSS) go here. Reference with absolute paths like /assets/image.png.
+Place runtime images and static assets here. Access via absolute paths like /assets/<filename>.
