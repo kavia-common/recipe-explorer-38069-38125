@@ -152,11 +152,12 @@ async function findFreePort(preferredPort) {
             healthServer.close();
           }
         } catch (_) {}
+        // Ensure normalization of exit to 0 on orchestrated shutdown
         process.exit(0);
       };
-      setTimeout(exitSoon, 200);
+      setTimeout(exitSoon, 150);
       // Safety timeout to enforce exit even if timers are busy
-      setTimeout(exitSoon, 1000);
+      setTimeout(exitSoon, 800);
     }
   };
 

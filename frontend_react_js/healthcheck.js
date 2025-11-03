@@ -33,7 +33,9 @@ const options = {
 console.log(`[healthcheck] GET http://${options.host}:${options.port}${options.path}`);
 
 const req = http.request(options, (res) => {
-  if (res.statusCode >= 200 && res.statusCode < 500) {
+  const ok = res.statusCode >= 200 && res.statusCode < 500;
+  console.log(`[healthcheck] status=${res.statusCode} ok=${ok}`);
+  if (ok) {
     process.exit(0);
   } else {
     process.exit(1);
