@@ -109,8 +109,8 @@ async function findFreePort(preferredPort) {
   let shuttingDown = false;
 
   // Ensure parent exits cleanly when receiving termination signals (avoid 137 noise)
-  const normalizeAndExit = (signal) => {
-    console.log(`[start-noninteractive] Received ${signal} in parent, signaling child and exiting 0...`);
+  const forwardAndExitSoon = (signal) => {
+    console.log(`[start-noninteractive] Received ${signal} in parent, forwarding to child and exiting soon...`);
     try {
       if (child && !child.killed) {
         child.kill(signal);
@@ -118,13 +118,14 @@ async function findFreePort(preferredPort) {
     } catch (e) {
       console.error('[start-noninteractive] Error forwarding signal to child:', e);
     } finally {
-      // Give child a moment to tear down listeners
-      setTimeout(() => process.exit(0), 100);
+      // Soft delay to allow child to teardown; parent will exit 0 via normalized path
+      setTimeout(() => process.exit(0), 200);
     }
   };
 
-  process.once('SIGTERM', () => normalizeAndExit('SIGTERM'));
-  process.once('SIGINT', () => normalizeAndExit('SIGINT'));
+  process.once('SIGTERM', () => forwardAndExitSoon('SIGTERM'));
+  process.once('SIGINT', () => forwardAndExitSoon('SIGINT'));
+  process.once('SIGHUP', () => forwardAndExitSoon('SIGHUP'));
 
   // Propagate termination to child from internal shutdown calls as well
   const shutdown = (origin) => {
@@ -135,16 +136,17 @@ async function findFreePort(preferredPort) {
     try {
       if (child && !child.killed) {
         child.kill('SIGTERM');
-        // Hard kill as last resort to avoid hanging CI; shorter timeout to reduce 137 window
+        // Hard kill as last resort to avoid hanging CI quickly
         const killTimer = setTimeout(() => {
           try {
             if (child && !child.killed) {
+              console.warn('[start-noninteractive] Forcing SIGKILL to child after timeout.');
               child.kill('SIGKILL');
             }
           } catch (e) {
             // ignore
           }
-        }, 1500);
+        }, 1000);
         child.once('exit', () => clearTimeout(killTimer));
       }
     } catch (e) {
@@ -161,7 +163,7 @@ async function findFreePort(preferredPort) {
       try { healthServer.close(); } catch (_) {}
     }
     // Normalize signal-based exits to success (common in CI/CD orchestrated shutdowns)
-    if (signal === 'SIGINT' || signal === 'SIGTERM') {
+    if (signal === 'SIGINT' || signal === 'SIGTERM' || signal === 'SIGHUP') {
       console.warn(`[start-noninteractive] Dev server terminated by signal: ${signal}. Normalizing to exit code 0.`);
       return process.exit(0);
     }
@@ -184,11 +186,23 @@ async function findFreePort(preferredPort) {
     return process.exit(code ?? 0);
   });
 
+  child.on('exit', (code, signal) => {
+    // Backstop handler in case 'close' isn't triggered in some environments
+    if (signal) {
+      console.warn(`[start-noninteractive] Child exit signal ${signal} observed. Normalizing to 0.`);
+      process.exit(0);
+    } else if (code === 130 || code === 143 || code === 137 || code == null) {
+      console.log('[start-noninteractive] Child exit observed; normalizing to 0 for dev server.');
+      process.exit(0);
+    }
+  });
+
   child.on('error', (err) => {
     console.error('[start-noninteractive] Failed to start react-scripts:', err);
     process.exit(1);
   });
 
-  // Safety: If parent process is asked to exit by other means, try graceful shutdown
+  // Ensure graceful shutdown on node process termination paths
   process.on('beforeExit', () => shutdown('beforeExit'));
+  process.on('exit', () => shutdown('exit'));
 })();

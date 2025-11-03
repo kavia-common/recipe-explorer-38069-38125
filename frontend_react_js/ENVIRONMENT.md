@@ -31,7 +31,7 @@ Local development & CI defaults:
   - HOST=0.0.0.0 and BROWSER=none for containerized environments.
   - Disables heavy polling (CHOKIDAR_USEPOLLING=false, WATCHPACK_POLLING=false).
   - Disables fast refresh in CI (FAST_REFRESH=false).
-  - Graceful SIGTERM/SIGINT handling and normalization of exit codes 130/137/143 and signal exits to 0 to avoid misleading CI failures when the server is intentionally stopped.
+  - Graceful SIGTERM/SIGINT/SIGHUP handling and normalization of exit codes 130/137/143 and signal exits to 0 to avoid misleading CI failures when the server is intentionally stopped or force-terminated.
   - Explicit logs to reflect successful, intentional shutdown.
   - Optional readiness endpoint when `HEALTHCHECK_PORT` is set, returning `{status:"ok"}`.
 
