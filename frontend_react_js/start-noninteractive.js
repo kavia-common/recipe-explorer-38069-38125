@@ -19,6 +19,8 @@
  * Notes:
  * - Some orchestrators issue `kill -9 -$$` to the process group. This script avoids creating a new
  *   process group and never re-broadcasts signals to the whole group, to prevent unintended SIGKILL cascades.
+ * - Exit normalization: When shutting down due to signals or teardown, we map 130/137/143 and signal exits to 0,
+ *   ensuring CI doesn't flag intentional shutdowns as failures. Real startup/build failures still exit non-zero.
  */
 
 const net = require('net');

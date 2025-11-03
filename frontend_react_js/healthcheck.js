@@ -17,11 +17,13 @@ if (host === '0.0.0.0') {
 const port = Number(process.env.PORT || process.env.REACT_APP_PORT || 3000);
 // Support both REACT_APP_HEALTHCHECK_PATH and HEALTHCHECK_PATH
 const path = process.env.REACT_APP_HEALTHCHECK_PATH || process.env.HEALTHCHECK_PATH || '/'; // default to root
+// Normalize double slashes
+const normalizedPath = (path.startsWith('/') ? path : `/${path}`).replace(/\/{2,}/g, '/');
 
 const options = {
   host: process.env._HEALTH_HOST || host,
   port,
-  path,
+  path: normalizedPath,
   method: 'GET',
   timeout: 2000,
   headers: {
