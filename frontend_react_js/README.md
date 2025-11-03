@@ -28,6 +28,11 @@ Non-interactive/low-memory defaults are in `.env.development.local` (committed).
 
 Open http://localhost:3000 to view it in your browser.
 
+UI parity note:
+- The Sign In screen is implemented in src/SignIn.js using assets served from public/assets.
+- If images are missing, ensure Figma-derived images exist under public/assets and are referenced via /assets/... paths.
+- The dev server wrapper normalizes signal exits (SIGINT/SIGTERM/137/143) to 0 during orchestrated shutdown to avoid false CI failures.
+
 Public files:
 - `public/index.html` is the CRA HTML template with a `<div id="root">` mount point.
 - `public/manifest.json` defines basic PWA metadata (optional).
