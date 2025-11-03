@@ -38,7 +38,7 @@ Public files:
 - `public/index.html` is the CRA HTML template with a `<div id="root">` mount point.
 - `public/manifest.json` defines basic PWA metadata (optional).
 - `public/robots.txt` included.
-- `public/assets/` is where runtime-served images should live and be referenced as `/assets/...`.
+- `public/assets/` is where runtime-served images should live and be referenced as `/assets/...`. Required Figma images are copied here so the Sign In screen does not 404.
 - Placeholder icons `logo192.png`, `logo512.png`, and `favicon.ico` are present for development (replace in production).
 
 ### `npm run healthcheck`
