@@ -2,7 +2,7 @@
   "name": "react-kavia",
   "version": "0.1.0",
   "private": true,
-  "_note": "Use `npm start` (start-noninteractive.js) for CI to normalize signal exits and avoid false 137 failures.",
+  "_note": "Use `npm start` (start-noninteractive.js) for CI to normalize signal exits and avoid false 137 failures. NODE_OPTIONS capped by default.",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

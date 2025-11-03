@@ -3,7 +3,7 @@
  * PUBLIC_INTERFACE
  * Simple healthcheck script to be used by CI to verify the dev server is responding.
  * Exits 0 if the frontend host:port is reachable (2xx-4xx), non-zero otherwise.
- * Reads HOST/PORT from env; defaults to 0.0.0.0:3000.
+ * Reads HOST/PORT from env; defaults to 0.0.0.0:3000. PORT may be provided by REACT_APP_PORT as fallback.
  * If HEALTHCHECK_PATH is provided, it will request that path, otherwise GET /.
  * Example: HOST=127.0.0.1 PORT=3000 HEALTHCHECK_PATH=/ node healthcheck.js
  */
