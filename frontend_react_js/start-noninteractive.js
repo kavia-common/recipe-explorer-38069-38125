@@ -133,6 +133,10 @@ async function findFreePort(preferredPort) {
 
   // Ensure parent exits cleanly when receiving termination signals (avoid 137 noise)
   const forwardAndExitSoon = (signal) => {
+    if (normalized) {
+      // Already normalized/terminating; avoid duplicate work
+      return;
+    }
     console.log(
       `[start-noninteractive] Received ${signal} in parent, forwarding to child (pid=${child.pid}) and exiting soon...`
     );
@@ -143,21 +147,19 @@ async function findFreePort(preferredPort) {
     } catch (e) {
       console.error('[start-noninteractive] Error forwarding signal to child:', e);
     } finally {
-      // Delay slightly to let child start graceful teardown, then exit 0
-      // If the orchestrator issues a subsequent SIGKILL to the parent, normalize by planning to exit(0) quickly.
       const exitSoon = () => {
         try {
-          // best-effort close
           if (healthServer) {
             healthServer.close();
           }
         } catch (_) {}
-        // Ensure normalization of exit to 0 on orchestrated shutdown
+        // Normalize to 0 to prevent CI false failure on orchestrated shutdowns
         process.exit(0);
       };
+      // Short delay to let child start teardown
       setTimeout(exitSoon, 150);
-      // Safety timeout to enforce exit even if timers are busy
-      setTimeout(exitSoon, 800);
+      // Extra guard exit to ensure finalization even if timers are blocked
+      setTimeout(exitSoon, 1000);
     }
   };
 
@@ -232,20 +234,14 @@ async function findFreePort(preferredPort) {
     if (healthServer) {
       try { healthServer.close(); } catch (_) {}
     }
-    // Normalize signal-based exits to success (common in orchestrated shutdowns)
     if (signal) {
       return normalizeAndExit('Dev server closed by signal', code, signal);
     }
-    // Normalize common clean exit codes (e.g., Ctrl+C -> 130) or null
-    if (code === 0 || code === 130 || code == null) {
-      return normalizeAndExit('Dev server exited cleanly', code, null);
+    // Normalize common clean/signal-related exit codes that indicate intentional stops
+    const nonFatalCodes = new Set([0, 130, 137, 143, null, undefined]);
+    if (nonFatalCodes.has(code)) {
+      return normalizeAndExit('Dev server exited cleanly (normalized)', code ?? null, null);
     }
-    // Normalize 143 (SIGTERM) and 137 (SIGKILL/OOM in teardown contexts).
-    // Note: Some orchestrators kill the parent after forwarding SIGINT; child may be SIGKILLed, producing 137.
-    if (code === 143 || code === 137) {
-      return normalizeAndExit('Signal-related exit code observed', code, null);
-    }
-    // Negative codes can indicate signal exits in some environments
     if (typeof code === 'number' && code < 0) {
       return normalizeAndExit('Negative signal-style exit code observed', code, null);
     }

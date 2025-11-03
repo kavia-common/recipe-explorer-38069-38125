@@ -1,0 +1,51 @@
+/* Root screen container (375x812 per Figma) */
+#screen-sign-in-11-235 {
+  background-color: var(--style-10-background-color);
+  width: 375px;
+  height: 812px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Accessibility outline for focusable elements */
+#screen-sign-in-11-235 :focus {
+  outline: 2px solid rgba(0,0,0,0.2);
+  outline-offset: 2px;
+}
+
+/* Button interactions */
+#bigbtn-54-668 {
+  transition: filter 0.15s ease, transform 0.05s ease;
+}
+
+#bigbtn-54-668:hover {
+  filter: brightness(0.98);
+}
+
+#bigbtn-54-668:active {
+  transform: translateY(1px);
+}
+
+/* Input rectangles mimic Figma stroke radius */
+#rect-30-585,
+#rect-30-590 {
+  box-sizing: border-box;
+  background: transparent;
+}
+
+#ph-30-585,
+#ph-30-590 {
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Fine-tune separator opacity to match subtle Figma line */
+#line-group-12-139 .figma-abs {
+  opacity: 0.9;
+}
+
+/* Status bar typography smoothing */
+#statusbar-13-71 {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

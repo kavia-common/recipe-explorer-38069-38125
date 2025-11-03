@@ -1,0 +1,233 @@
+:root {
+  /* Colors */
+  --color-colour-styles-neutral-colour-white: var(--color-ffffff);
+  --color-colour-styles-primary-colour-primary-100: #00000000; /* token without hex */
+  --color-colour-styles-neutral-colour-black: var(--color-000000);
+  --color-colour-styles-label-colour: #00000000;
+  --color-colour-styles-secondary-colour-secondary-100: #00000000;
+  --color-google-icon: #00000000;
+  --color-facebook-icon: #00000000;
+  --color-colour-styles-neutral-colour-gray-4: #00000000;
+  --color-colour-styles-neutral-colour-gray-1: #00000000;
+  --color-white-0: #00000000;
+  --color-neutral-90: #00000000;
+  --color-colour-styles-neutral-colour-gray-3: #00000000;
+  --color-colour-styles-secondary-colour-secondary-80: #00000000;
+  --color-colour-styles-secondary-colour-secondary-40: #00000000;
+  --color-colour-styles-primary-colour-primary-80: #00000000;
+  --color-neutral-30: #00000000;
+  --color-colour-styles-rating: #00000000;
+  --color-colour-styles-secondary-colour-secondary-20: #00000000;
+  --color-colour-styles-primary-colour-primary-40: #00000000;
+  --color-neutral-100: #00000000;
+  --color-colour-styles-neutral-colour-gray-2: #00000000;
+  --color-food-recipe-dark-grey: #00000000;
+  --color-white: #00000000;
+  --color-black: #00000000;
+
+  /* Direct hex colors (resolved) */
+  --color-ffffff: #ffffff;
+  --color-292929: #292929;
+  --color-000000: #000000;
+  --color-e9fffa: #e9fffa;
+  --color-979797: #979797;
+  --color-fff2af: #fff2af;
+  --color-129575: #129575;
+  --color-dadada: #dadada;
+  --color-4cd964: #4cd964;
+  --color-121212: #121212;
+  --color-ff9c00: #ff9c00;
+  --color-ffc107: #ffc107;
+  --color-ff3d00: #ff3d00;
+  --color-4caf50: #4caf50;
+  --color-1976d2: #1976d2;
+  --color-035b81: #035b81;
+  --color-d9d9d9: #d9d9d9;
+  --color-484848: #484848;
+  --color-303030: #303030;
+  --color-a9a9a9: #a9a9a9;
+  --color-ffa61a: #ffa61a;
+  --color-ffce80: #ffce80;
+  --color-71b1a1: #71b1a1;
+  --color-130f26: #130f26;
+  --color-c1c1c1: #c1c1c1;
+  --color-ffe1b3: #ffe1b3;
+  --color-ffad30: #ffad30;
+  --color-dbebe7: #dbebe7;
+  --color-898989: #898989;
+  --color-292d32: #292d32;
+  --color-181818: #181818;
+  --color-c4c4c4: #c4c4c4;
+  --color-797979: #797979;
+  --color-808a96: #808a96;
+  --color-ceecd7: #ceecd7;
+  --color-31b057: #31b057;
+  --color-ffe1e7: #ffe1e7;
+  --color-fd3654: #fd3654;
+  --color-ffba4d: #ffba4d;
+  --color-d8d8d8: #d8d8d8;
+  --color-f6faf9: #f6faf9;
+  --color-afd3ca: #afd3ca;
+  --color-f4f4f4: #f4f4f4;
+  --color-9747ff: #9747ff;
+  --color-828282: #828282;
+
+  /* Typography variables (subset used on this screen; all defined typographies included) */
+  --typo-60-family: 'Poppins', sans-serif;
+  --typo-60-size: 30px;
+  --typo-60-weight: 600;
+  --typo-60-line-height: 45px;
+  --typo-60-letter-spacing: 0;
+  --typo-60-text-align: left;
+  --typo-60-color: var(--color-000000);
+
+  --typo-61-family: 'Poppins', sans-serif;
+  --typo-61-size: 20px;
+  --typo-61-weight: 400;
+  --typo-61-line-height: 30px;
+  --typo-61-letter-spacing: 0;
+  --typo-61-text-align: left;
+  --typo-61-color: var(--color-121212);
+
+  --typo-62-family: 'Poppins', sans-serif;
+  --typo-62-size: 11px;
+  --typo-62-weight: 400;
+  --typo-62-line-height: 16.5px;
+  --typo-62-text-align: center;
+  --typo-62-letter-spacing: 0;
+  --typo-62-color: var(--color-ff9c00);
+
+  --typo-63-family: 'Poppins', sans-serif;
+  --typo-63-size: 11px;
+  --typo-63-weight: 500;
+  --typo-63-line-height: 16.5px;
+  --typo-63-text-align: left;
+  --typo-63-letter-spacing: 0;
+  --typo-63-color: var(--color-000000);
+
+  --typo-64-family: 'Poppins', sans-serif;
+  --typo-64-size: 11px;
+  --typo-64-weight: 500;
+  --typo-64-line-height: 16.5px;
+  --typo-64-text-align: left;
+  --typo-64-letter-spacing: 0;
+  --typo-64-color: var(--color-d9d9d9);
+
+  --typo-65-family: 'Poppins', sans-serif;
+  --typo-65-size: 11px;
+  --typo-65-weight: 400;
+  --typo-65-line-height: 16.5px;
+  --typo-65-text-align: left;
+  --typo-65-letter-spacing: 0;
+  --typo-65-color: var(--color-d9d9d9);
+
+  --typo-66-family: 'Poppins', sans-serif;
+  --typo-66-size: 14px;
+  --typo-66-weight: 400;
+  --typo-66-line-height: 21px;
+  --typo-66-letter-spacing: 0;
+  --typo-66-text-align: left;
+  --typo-66-color: var(--color-121212);
+
+  --typo-67-family: 'SF Pro Display', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+  --typo-67-size: 15px;
+  --typo-67-weight: 500;
+  --typo-67-line-height: 17.900390625px;
+  --typo-67-letter-spacing: -0.16500000655651093px;
+  --typo-67-text-align: left;
+  --typo-67-color: var(--color-303030);
+
+  --typo-58-family: 'Poppins', sans-serif;
+  --typo-58-size: 16px;
+  --typo-58-weight: 600;
+  --typo-58-line-height: 24px;
+  --typo-58-letter-spacing: 0;
+  --typo-58-text-align: center;
+  --typo-58-color: var(--color-ffffff);
+
+  /* Styles as CSS custom properties for reuse */
+  --style-10-background-color: var(--color-ffffff);
+  --style-1-background-color: var(--color-292929);
+  --style-3-background-color: var(--color-000000);
+  --style-18-background-color: var(--color-121212);
+  --style-11-background-color: var(--color-129575);
+  --style-12-background-color: var(--color-ffffff); /* used as transparent overlay in icon group (opacity set on element) */
+  --style-19-background-color: var(--color-ff9c00);
+  --style-20-background-color: var(--color-ffffff);
+  --style-21-background-color: var(--color-ffc107);
+  --style-22-background-color: var(--color-ff3d00);
+  --style-23-background-color: var(--color-4caf50);
+  --style-24-background-color: var(--color-1976d2);
+  --style-25-opacity: 0.58; /* from style_25 */
+  --style-26-background-color: var(--color-035b81);
+  --style-27-opacity: 0;
+  --style-28-background-color: var(--color-d9d9d9);
+  --style-28-border-color: var(--color-d9d9d9);
+  --style-28-border-width: 1px;
+  --style-30-border-color: var(--color-d9d9d9);
+  --style-30-border-width: 1.5px;
+  --style-30-border-radius: 10px;
+  --style-32-background-color: var(--color-121212);
+  --style-33-background-color: var(--color-303030);
+  --style-33-opacity: 0.4;
+  --style-34-background-color: var(--color-303030);
+  --style-34-border-color: var(--color-4cd964);
+  --style-34-border-radius: 1.6px;
+  --style-34-border-width: 0; /* used in battery fill */
+  --style-126-background-color: var(--color-ffffff);
+  --style-126-border-radius: 10px;
+  --style-126-box-shadow: 0 8px 25px 0 #202020; /* shadow_1 */
+  --style-32-border-radius: 100px;
+
+  /* Spacing tokens (common scale) */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Shadows mapped from design system shadows for convenience */
+  --shadow-0: 0 0 5px 3px #696969;
+  --shadow-1: 0 8px 25px 0 #202020;
+  --shadow-2: 0 0 8px 0 #6c6c6c;
+  --shadow-3: 0 0 20px 0 #000000;
+  --shadow-4: 0 6.312px 19.725px 0 #202020;
+  --shadow-5: 0 4px 4px 0 #000000;
+  --shadow-7: 0 2px 10px 0 #000000;
+  --shadow-8: 0 0 2px 0 #000000;
+  --shadow-9: 0 0 10px 0 #000000;
+  --shadow-10: 0 0 30px 0 #000000;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-ffffff);
+}
+
+.figma-screen {
+  position: relative;
+  overflow: hidden;
+}
+
+.figma-abs {
+  position: absolute;
+}
+
+.figma-flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.figma-flex-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}

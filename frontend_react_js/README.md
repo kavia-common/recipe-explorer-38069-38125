@@ -2,7 +2,7 @@
 
 Note: Public folder and .env.development.local are committed to guarantee stable non-interactive startup in CI (no prompts, no sourcemaps, capped memory). Shutdown signals are normalized to 0 by the start wrapper to avoid false failures.
 
-Note: This app uses a non-interactive start wrapper that normalizes SIGINT/SIGTERM/137/143 to 0 during orchestrated shutdown. Exit code 137 seen in logs during teardown is not treated as a failure.
+Note: This app uses a non-interactive start wrapper that normalizes SIGINT/SIGTERM/137/143 to 0 during orchestrated shutdown. Exit code 137 seen in logs during teardown is not treated as a failure. Deprecation warnings like [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE]/[DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] from CRA 5 dev server are expected and harmless.
 
 This project provides a minimal React template with a clean, modern UI and minimal dependencies.
 
