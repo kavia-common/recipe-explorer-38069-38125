@@ -152,6 +152,8 @@ async function findFreePort(preferredPort) {
   process.once('SIGINT', () => forwardAndExitSoon('SIGINT'));
   process.once('SIGHUP', () => forwardAndExitSoon('SIGHUP'));
   process.once('SIGQUIT', () => forwardAndExitSoon('SIGQUIT'));
+  // Some environments may forward SIGUSR1 during teardown; treat similarly
+  process.once('SIGUSR1', () => forwardAndExitSoon('SIGUSR1'));
 
   // Propagate termination to child from internal shutdown calls as well
   const shutdown = (origin) => {

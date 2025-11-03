@@ -17,7 +17,8 @@
     "test": "cross-env CI=true react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "healthcheck": "node ./healthcheck.js",
-    "postinstall": "npx --yes update-browserslist-db@latest > /dev/null 2>&1 || true"
+    "postinstall": "npx --yes update-browserslist-db@latest > /dev/null 2>&1 || true",
+    "ci:info": "echo \"Using non-interactive start wrapper. Signals (SIGINT/SIGTERM/137/143) during teardown are normalized to 0.\""
   },
   "eslintConfig": {
     "extends": "react-app"
