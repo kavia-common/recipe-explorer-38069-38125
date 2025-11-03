@@ -88,9 +88,26 @@ async function findFreePort(preferredPort) {
 
   // Propagate termination to child and exit cleanly (avoid 137 mapping)
   const shutdown = (signal) => {
-    if (!child.killed) {
-      console.log(`[start-noninteractive] Received ${signal}, shutting down dev server...`);
-      child.kill('SIGTERM');
+    console.log(`[start-noninteractive] Received ${signal}, shutting down dev server...`);
+    try {
+      if (child && !child.killed) {
+        // Forward the same signal first
+        child.kill(signal);
+        // Fallback SIGTERM after a short delay
+        setTimeout(() => {
+          if (!child.killed) {
+            child.kill('SIGTERM');
+          }
+        }, 2000);
+        // Hard kill as last resort to avoid hanging CI
+        setTimeout(() => {
+          if (!child.killed) {
+            child.kill('SIGKILL');
+          }
+        }, 5000);
+      }
+    } catch (e) {
+      console.error('[start-noninteractive] Error during shutdown:', e);
     }
   };
 
@@ -100,9 +117,15 @@ async function findFreePort(preferredPort) {
   child.on('close', (code, signal) => {
     if (signal) {
       console.error(`[start-noninteractive] Dev server terminated by signal: ${signal}`);
-      // Map SIGKILL/SIGTERM to 0 for graceful CI completion unless true error occurred
-      const normalized = signal === 'SIGKILL' || signal === 'SIGTERM' ? 0 : 1;
+      // Map SIGINT/SIGTERM/SIGKILL to success to avoid CI noise when intentionally stopped
+      const normalized =
+        signal === 'SIGINT' || signal === 'SIGTERM' || signal === 'SIGKILL' ? 0 : 1;
       process.exit(normalized);
+      return;
+    }
+    // If CRA closed with Ctrl+C-like code 130 or null, treat as success
+    if (code === 130 || code == null) {
+      process.exit(0);
       return;
     }
     process.exit(code ?? 0);
