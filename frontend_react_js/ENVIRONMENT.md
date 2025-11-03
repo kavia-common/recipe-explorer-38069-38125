@@ -56,6 +56,7 @@ Notes on CI exit codes:
 Additional notes:
 - For stability, prefer `npm start` (wrapper) over `react-scripts start` directly in CI.
 - If you see [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE]/[DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] warnings, they are harmless and expected with CRA 5 dev server.
+- Public folder with index.html/manifest/robots and placeholder icons is committed to ensure clean dev-server startup without missing asset errors.
 
 Public files:
 - CRA public folder is provided with `public/index.html`, `public/manifest.json`, and `public/robots.txt`.

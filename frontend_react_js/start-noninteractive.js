@@ -12,7 +12,7 @@
  * - Handles SIGTERM/SIGINT gracefully to avoid exit code noise in CI logs.
  * - Normalizes SIGINT/SIGTERM/SIGHUP and codes 130/137/143 to exit 0 for dev-server shutdown paths.
  * - Exposes a simple healthcheck HTTP endpoint so CI can verify readiness without parsing logs.
- * - Static UI assets (images/CSS) should be placed in public/assets and referenced as /assets/... in components.
+ * - Static UI assets (images/CSS) should be placed in public/assets and referenced as /assets/... in components. The CRA public folder (index.html, manifest.json, robots.txt, icons) is committed for stable startup.
  *
  * Prevents the CRA interactive port prompt by selecting an available port up-front.
  *

@@ -16,6 +16,7 @@ Public folder and CI defaults are committed:
 - public/index.html, manifest.json, robots.txt, and placeholder icons exist to avoid dev-server 404s and ensure stable startup.
 - .env.development.local caps Node heap (1024 MB), disables sourcemaps/polling/fast refresh, and sets BROWSER/HOST/PORT for non-interactive starts.
 - All Figma images referenced by components are available under public/assets so React can serve them by /assets/... URLs.
+- Use `npm start` (wrapper) in CI to ensure shutdown normalization for 130/137/143/signal exits.
 
 ## Features
 

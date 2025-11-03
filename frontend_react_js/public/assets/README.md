@@ -1,7 +1,3 @@
-This folder serves static assets for the React dev server.
-Place images referenced by React components here and reference them using absolute paths like /assets/your-image.png.
+This folder holds static assets served by CRA and referenced via absolute paths like /assets/... from React components.
 
-Notes:
-- Images used by src/SignIn.js are expected at /assets/figma_image_*.png.
-- Do not import these via JS to keep the bundle minimal; serve statically from /public/assets.
-- Keep filenames stable to avoid unnecessary cache busting in development.
+For development/CI, place any required images here. Figma-derived images used by SignIn are expected to be placed here by the build assets step.

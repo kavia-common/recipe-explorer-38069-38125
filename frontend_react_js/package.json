@@ -19,7 +19,8 @@
     "healthcheck": "node ./healthcheck.js",
     "prepare": "mkdir -p public/assets || true",
     "postinstall": "npx --yes update-browserslist-db@latest > /dev/null 2>&1 || true",
-    "ci:info": "echo \"Using non-interactive start wrapper. Signals (SIGINT/SIGTERM/137/143) during teardown are normalized to 0. NODE_OPTIONS capped; sourcemaps off; polling off.\""
+    "ci:info": "echo \"Using non-interactive start wrapper. Signals (SIGINT/SIGTERM/137/143) during teardown are normalized to 0. NODE_OPTIONS capped; sourcemaps off; polling off.\"",
+    "docs:note": "echo \"Run npm start (wrapper) in CI; exit codes 130/137/143 normalized to 0 on teardown.\""
   },
   "eslintConfig": {
     "extends": "react-app"
