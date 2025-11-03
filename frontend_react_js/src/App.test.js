@@ -1,8 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders Sign In UI', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  // Check for "Sign In" button from the SignIn component
+  const btn = screen.getByRole('button', { name: /sign in/i });
+  expect(btn).toBeInTheDocument();
+
+  // Check for "Email" label to ensure the form scaffold is present
+  expect(screen.getByText(/email/i)).toBeInTheDocument();
 });

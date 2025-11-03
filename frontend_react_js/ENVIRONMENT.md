@@ -19,4 +19,5 @@ The app reads the following variables (as provided in the container metadata):
 - REACT_APP_EXPERIMENTS_ENABLED
 
 Local development defaults:
-- `.env.development.local` is included solely to reduce dev server memory usage in CI (disables source maps and polling). It does not contain secrets.
+- `.env.development.local` is included solely to reduce dev server memory usage in CI (disables source maps and polling, lowers Node max memory). It does not contain secrets.
+- The start/build scripts also set NODE_OPTIONS=--max-old-space-size=1024 to avoid OOM terminations in constrained environments.
