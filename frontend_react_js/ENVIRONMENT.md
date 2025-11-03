@@ -21,3 +21,8 @@ The app reads the following variables (as provided in the container metadata):
 Local development defaults:
 - `.env.development.local` is included solely to reduce dev server memory usage in CI (disables source maps and polling, lowers Node max memory). It does not contain secrets.
 - The start/build scripts also set NODE_OPTIONS=--max-old-space-size=1024 to avoid OOM terminations in constrained environments.
+- The dev server is started via `start-noninteractive.js`, which enforces:
+  - Non-interactive mode (no port prompts) by setting PORT from REACT_APP_PORT/PORT or defaulting to 3000
+  - HOST=0.0.0.0 and BROWSER=none for containerized environments
+  - Disables heavy polling (CHOKIDAR_USEPOLLING=false, WATCHPACK_POLLING=false)
+  - Disables fast refresh in CI (FAST_REFRESH=false)
