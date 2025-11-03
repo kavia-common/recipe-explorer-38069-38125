@@ -255,4 +255,18 @@ async function findFreePort(preferredPort) {
   // Ensure graceful shutdown on node process termination paths
   process.on('beforeExit', () => shutdown('beforeExit'));
   process.on('exit', () => shutdown('exit'));
+
+  // Normalize unexpected promise rejections or exceptions during teardown to 0
+  process.on('uncaughtException', (err) => {
+    console.warn('[start-noninteractive] uncaughtException observed:', err && err.message ? err.message : err);
+    // If we are shutting down already, treat as non-fatal
+    if (shuttingDown) return process.exit(0);
+    // Otherwise, fail
+    process.exit(1);
+  });
+  process.on('unhandledRejection', (reason) => {
+    console.warn('[start-noninteractive] unhandledRejection observed:', reason);
+    if (shuttingDown) return process.exit(0);
+    process.exit(1);
+  });
 })();
