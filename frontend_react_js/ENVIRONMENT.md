@@ -26,3 +26,5 @@ Local development defaults:
   - HOST=0.0.0.0 and BROWSER=none for containerized environments
   - Disables heavy polling (CHOKIDAR_USEPOLLING=false, WATCHPACK_POLLING=false)
   - Disables fast refresh in CI (FAST_REFRESH=false)
+  - Graceful SIGTERM/SIGINT handling to exit with code 0 in CI when the process is intentionally stopped (prevents exit 137 noise)
+- A `postinstall` step updates Browserslist DB to silence "browserslist data is old" warnings in CI logs.

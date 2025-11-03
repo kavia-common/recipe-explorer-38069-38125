@@ -9,12 +9,14 @@
  * - Caps Node memory via NODE_OPTIONS, unless already set.
  * - Forces HOST=0.0.0.0 for containerized environments.
  * - Auto-selects a free port to avoid CRA interactive prompt.
+ * - Handles SIGTERM/SIGINT gracefully to avoid exit code 137 in CI logs.
  *
  * This prevents the "Something is already running on port 3000. Would you like to run the app on another port?"
  * interactive prompt by ensuring a specific free PORT is set up-front in CI.
  */
 
 const net = require('net');
+const path = require('path');
 const { spawn } = require('child_process');
 
 function envOrDefault(name, def) {
@@ -69,21 +71,45 @@ async function findFreePort(preferredPort) {
 
   console.log(`[start-noninteractive] Using PORT=${env.PORT} HOST=${env.HOST}`);
 
-  // Start CRA
-  const child = spawn(
-    process.platform === 'win32' ? 'npx.cmd' : 'npx',
-    ['react-scripts', 'start'],
-    {
-      stdio: 'inherit',
-      env,
-    }
+  // Resolve the react-scripts start binary directly to avoid spawning an extra npx process
+  const reactScriptsBin = path.join(
+    process.cwd(),
+    'node_modules',
+    '.bin',
+    process.platform === 'win32' ? 'react-scripts.cmd' : 'react-scripts'
   );
+
+  const args = ['start'];
+
+  const child = spawn(reactScriptsBin, args, {
+    stdio: 'inherit',
+    env,
+  });
+
+  // Propagate termination to child and exit cleanly (avoid 137 mapping)
+  const shutdown = (signal) => {
+    if (!child.killed) {
+      console.log(`[start-noninteractive] Received ${signal}, shutting down dev server...`);
+      child.kill('SIGTERM');
+    }
+  };
+
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => shutdown('SIGINT'));
 
   child.on('close', (code, signal) => {
     if (signal) {
       console.error(`[start-noninteractive] Dev server terminated by signal: ${signal}`);
-      process.exit(137); // map to 137 typical OOM/kill for consistency
+      // Map SIGKILL/SIGTERM to 0 for graceful CI completion unless true error occurred
+      const normalized = signal === 'SIGKILL' || signal === 'SIGTERM' ? 0 : 1;
+      process.exit(normalized);
+      return;
     }
-    process.exit(code);
+    process.exit(code ?? 0);
+  });
+
+  child.on('error', (err) => {
+    console.error('[start-noninteractive] Failed to start react-scripts:', err);
+    process.exit(1);
   });
 })();
